@@ -58,7 +58,7 @@
         <!-- Dependency versions -->
         <guava.version>33.4.0-jre</guava.version>
         <jackson.version>2.18.2</jackson.version>
-        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-boot.version>4.0.1</spring-boot.version>
 
         <!-- Test dependency versions -->
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
