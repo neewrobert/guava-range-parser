@@ -24,8 +24,8 @@ import io.github.neewrobert.guavarangeparser.core.InfinityStyle;
  * // Returns: "[0..100)"
  * }</pre>
  *
- * @see io.github.neewrobert.core.RangeParser
- * @see io.github.neewrobert.core.RangeFormatter
+ * @see io.github.neewrobert.guavarangeparser.core.RangeParser
+ * @see io.github.neewrobert.guavarangeparser.core.RangeFormatter
  */
 public class GuavaRangeParserModule extends Module {
 

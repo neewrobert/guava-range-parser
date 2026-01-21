@@ -5,10 +5,10 @@
  * com.google.common.collect.Range} objects:
  *
  * <ul>
- *   <li>{@link io.github.neewrobert.core.RangeParser} - Parses string notation to Range
- *   <li>{@link io.github.neewrobert.core.RangeFormatter} - Formats Range to string notation
- *   <li>{@link io.github.neewrobert.core.TypeAdapter} - Interface for custom type parsing
- *   <li>{@link io.github.neewrobert.core.BuiltInTypeAdapters} - Pre-configured adapters
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeParser} - Parses string notation to Range
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeFormatter} - Formats Range to string notation
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.TypeAdapter} - Interface for custom type parsing
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.BuiltInTypeAdapters} - Pre-configured adapters
  * </ul>
  *
  * <h2>Quick Start</h2>
@@ -36,7 +36,7 @@
  *   <tr><td>{@code (-∞..+∞)}</td><td>all</td><td>Unbounded</td></tr>
  * </table>
  *
- * @see io.github.neewrobert.core.RangeParser
- * @see io.github.neewrobert.core.RangeFormatter
+ * @see io.github.neewrobert.guavarangeparser.core.RangeParser
+ * @see io.github.neewrobert.guavarangeparser.core.RangeFormatter
  */
 package io.github.neewrobert.guavarangeparser.core;

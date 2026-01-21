@@ -21,7 +21,7 @@
  * my-app.refresh-interval=[PT1M..PT5M]
  * </pre>
  *
- * @see io.github.neewrobert.spring.RangeConverterFactory
- * @see io.github.neewrobert.spring.RangeConverterAutoConfiguration
+ * @see io.github.neewrobert.guavarangeparser.spring.RangeConverterFactory
+ * @see io.github.neewrobert.guavarangeparser.spring.RangeConverterAutoConfiguration
  */
 package io.github.neewrobert.guavarangeparser.spring;

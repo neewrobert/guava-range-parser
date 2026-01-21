@@ -27,7 +27,7 @@
  *     .build();
  * }</pre>
  *
- * @see io.github.neewrobert.jackson.GuavaRangeParserModule
- * @see io.github.neewrobert.jackson.OutputFormat
+ * @see io.github.neewrobert.guavarangeparser.jackson.GuavaRangeParserModule
+ * @see io.github.neewrobert.guavarangeparser.jackson.OutputFormat
  */
 package io.github.neewrobert.guavarangeparser.jackson;
