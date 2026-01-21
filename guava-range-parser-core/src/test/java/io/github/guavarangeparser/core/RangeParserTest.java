@@ -196,6 +196,42 @@ class RangeParserTest {
           .isInstanceOf(RangeParseException.class)
           .hasMessageContaining("Failed to parse");
     }
+
+    @Test
+    void throwsOnInputExceedingMaxLength() {
+      String longInput = "[" + "1".repeat(1500) + "..100)";
+      assertThatThrownBy(() -> RangeParser.parse(longInput, Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("exceeds maximum length");
+    }
+
+    @Test
+    void acceptsInputAtExactlyMaxLength() {
+      // Create a valid range string at exactly 1000 chars (the max limit)
+      // Format: [<digits>..<digits>] = 1 + digits + 2 + digits + 1 = 4 + 2*digits
+      // For 1000 chars: digits = (1000 - 4) / 2 = 498
+      String digits = "1".repeat(498);
+      String input = "[" + digits + ".." + digits + "]";
+      assertThat(input.length()).isEqualTo(1000);
+
+      // Should NOT throw length exception - fails later on number parsing
+      assertThatThrownBy(() -> RangeParser.parse(input, Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Failed to parse")
+          .hasMessageNotContaining("exceeds maximum length");
+    }
+
+    @Test
+    void rejectsInputAtOneOverMaxLength() {
+      // Create input at exactly 1001 chars (one over the limit)
+      String digits = "1".repeat(498);
+      String input = "[" + digits + ".." + digits + "]!"; // 1001 chars
+      assertThat(input.length()).isEqualTo(1001);
+
+      assertThatThrownBy(() -> RangeParser.parse(input, Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("exceeds maximum length");
+    }
   }
 
   @Nested

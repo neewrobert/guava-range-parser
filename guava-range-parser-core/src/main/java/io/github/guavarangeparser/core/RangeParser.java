@@ -75,6 +75,14 @@ public final class RangeParser {
   /** Pattern to detect positive infinity. */
   private static final Pattern POS_INF_DETECT = Pattern.compile("^" + POS_INF_PATTERN + "$");
 
+  /**
+   * Maximum allowed length for input strings.
+   *
+   * <p>This limit prevents denial-of-service attacks via extremely long input strings
+   * that could cause memory exhaustion or excessive regex processing time.
+   */
+  private static final int MAX_INPUT_LENGTH = 1000;
+
   private final Map<Class<?>, TypeAdapter<?>> typeAdapters;
   private final boolean lenient;
 
@@ -122,6 +130,13 @@ public final class RangeParser {
   public <T extends Comparable<?>> Range<T> parseRange(String rangeString, Class<T> elementType) {
     requireNonNull(rangeString, "rangeString must not be null");
     requireNonNull(elementType, "elementType must not be null");
+
+    if (rangeString.length() > MAX_INPUT_LENGTH) {
+      throw new RangeParseException(
+          "Input exceeds maximum length of " + MAX_INPUT_LENGTH + " characters",
+          rangeString.substring(0, Math.min(50, rangeString.length())) + "...",
+          0);
+    }
 
     String trimmed = rangeString.trim();
     if (trimmed.isEmpty()) {
