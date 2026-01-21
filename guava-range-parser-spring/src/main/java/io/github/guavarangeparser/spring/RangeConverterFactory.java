@@ -58,8 +58,8 @@ public class RangeConverterFactory implements GenericConverter {
     return ImmutableSet.of(new ConvertiblePair(String.class, Range.class));
   }
 
-  @Override
   @Nullable
+  @Override
   public Object convert(
       @Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
     if (source == null) {

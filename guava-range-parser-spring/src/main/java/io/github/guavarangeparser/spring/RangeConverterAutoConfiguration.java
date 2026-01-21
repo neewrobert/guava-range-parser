@@ -49,8 +49,8 @@ public class RangeConverterAutoConfiguration {
    * @return the converter factory
    */
   @Bean
-  @ConfigurationPropertiesBinding
   @ConditionalOnMissingBean(RangeConverterFactory.class)
+  @ConfigurationPropertiesBinding
   public RangeConverterFactory rangeConverterFactory() {
     return new RangeConverterFactory();
   }

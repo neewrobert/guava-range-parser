@@ -199,6 +199,80 @@ class RangeParserTest {
   }
 
   @Nested
+  class RangeParseExceptionDetails {
+
+    @Test
+    void exceptionContainsInputString() {
+      String input = "invalid-range";
+      try {
+        RangeParser.parse(input, Integer.class);
+      } catch (RangeParseException e) {
+        assertThat(e.getInput()).isEqualTo(input);
+      }
+    }
+
+    @Test
+    void exceptionContainsPosition() {
+      String input = "invalid-range";
+      try {
+        RangeParser.parse(input, Integer.class);
+      } catch (RangeParseException e) {
+        assertThat(e.getPosition()).isEqualTo(0);
+      }
+    }
+
+    @Test
+    void exceptionContainsNonZeroPosition() {
+      // Directly create exception with non-zero position to verify getPosition() returns it
+      RangeParseException ex = new RangeParseException("Error", "input", 5);
+      assertThat(ex.getPosition()).isEqualTo(5);
+    }
+
+    @Test
+    void exceptionMessageContainsInputInQuotes() {
+      String input = "[invalid..range)";
+      assertThatThrownBy(() -> RangeParser.parse(input, Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Input: \"" + input + "\"");
+    }
+
+    @Test
+    void exceptionWithPositionShowsCaretPointer() {
+      // Create exception with position in the middle of input
+      RangeParseException ex = new RangeParseException("Error at position", "abcdefgh", 3);
+      String message = ex.getMessage();
+      assertThat(message).contains("^");
+      assertThat(message).contains("   ^"); // 3 spaces before caret
+    }
+
+    @Test
+    void exceptionWithZeroPositionDoesNotShowCaret() {
+      // When position is 0, no caret should be shown
+      RangeParseException ex = new RangeParseException("Error", "input", 0);
+      String message = ex.getMessage();
+      assertThat(message).doesNotContain("^");
+    }
+
+    @Test
+    void exceptionWithPositionAtEndDoesNotShowCaret() {
+      // When position >= input.length(), no caret should be shown
+      String input = "test";
+      RangeParseException ex = new RangeParseException("Error", input, input.length());
+      String message = ex.getMessage();
+      assertThat(message).doesNotContain("^");
+    }
+
+    @Test
+    void exceptionWithCausePreservesCause() {
+      IllegalArgumentException cause = new IllegalArgumentException("root cause");
+      RangeParseException ex = new RangeParseException("Error", "input", 0, cause);
+      assertThat(ex.getCause()).isSameAs(cause);
+      assertThat(ex.getInput()).isEqualTo("input");
+      assertThat(ex.getPosition()).isEqualTo(0);
+    }
+  }
+
+  @Nested
   class CustomTypeAdapter {
 
     @Test
@@ -235,6 +309,65 @@ class RangeParserTest {
     void handlesWhitespaceAroundEndpoints() {
       Range<Integer> range = RangeParser.parse("[ 0 .. 100 )", Integer.class);
       assertThat(range).isEqualTo(Range.closedOpen(0, 100));
+    }
+  }
+
+  @Nested
+  class BuilderReuse {
+
+    @Test
+    void builderCanBeReusedMultipleTimes() {
+      RangeParser.Builder builder = RangeParser.builder().lenient(true);
+      RangeParser p1 = builder.build();
+      RangeParser p2 = builder.build();
+
+      // Both parsers should have built-in adapters
+      Range<Integer> r1 = p1.parseRange("[0..100)", Integer.class);
+      Range<Integer> r2 = p2.parseRange("[0..100)", Integer.class);
+
+      assertThat(r1).isEqualTo(Range.closedOpen(0, 100));
+      assertThat(r2).isEqualTo(Range.closedOpen(0, 100));
+    }
+
+    @Test
+    void builderReusedWithCustomAdapters() {
+      record Point(int x) implements Comparable<Point> {
+        static Point parse(String s) {
+          return new Point(Integer.parseInt(s));
+        }
+
+        @Override
+        public int compareTo(Point other) {
+          return Integer.compare(this.x, other.x);
+        }
+      }
+
+      RangeParser.Builder builder = RangeParser.builder().registerType(Point.class, Point::parse);
+      RangeParser p1 = builder.build();
+      RangeParser p2 = builder.build();
+
+      // Both parsers should work with custom AND built-in types
+      Range<Point> r1 = p1.parseRange("[0..100)", Point.class);
+      Range<Integer> r2 = p2.parseRange("[0..100)", Integer.class);
+      Range<Point> r3 = p2.parseRange("[50..200]", Point.class);
+
+      assertThat(r1).isEqualTo(Range.closedOpen(new Point(0), new Point(100)));
+      assertThat(r2).isEqualTo(Range.closedOpen(0, 100));
+      assertThat(r3).isEqualTo(Range.closed(new Point(50), new Point(200)));
+    }
+
+    @Test
+    void customAdapterCanOverrideBuiltIn() {
+      // Custom Integer adapter that doubles the value
+      TypeAdapter<Integer> doublingAdapter = s -> Integer.parseInt(s) * 2;
+
+      RangeParser parser = RangeParser.builder()
+          .registerType(Integer.class, doublingAdapter)
+          .build();
+
+      // If override works, [5..10) should become [10..20)
+      Range<Integer> range = parser.parseRange("[5..10)", Integer.class);
+      assertThat(range).isEqualTo(Range.closedOpen(10, 20));
     }
   }
 }

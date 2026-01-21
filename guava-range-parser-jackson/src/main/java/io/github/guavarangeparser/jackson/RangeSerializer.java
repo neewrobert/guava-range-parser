@@ -22,7 +22,7 @@ class RangeSerializer extends JsonSerializer<Range<?>> {
   }
 
   @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public void serialize(Range<?> value, JsonGenerator gen, SerializerProvider serializers)
       throws IOException {
     if (outputFormat == OutputFormat.STRING_NOTATION) {

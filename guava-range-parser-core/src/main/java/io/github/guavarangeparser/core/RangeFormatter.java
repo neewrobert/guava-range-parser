@@ -1,8 +1,9 @@
 package io.github.guavarangeparser.core;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
-import java.util.Objects;
 
 /**
  * Formatter for converting Guava {@link Range} objects to string notation.
@@ -67,7 +68,7 @@ public final class RangeFormatter {
    * @return the string notation
    */
   public <T extends Comparable<T>> String format(Range<T> range) {
-    Objects.requireNonNull(range, "range must not be null");
+    requireNonNull(range, "range must not be null");
 
     StringBuilder sb = new StringBuilder();
 
@@ -109,7 +110,7 @@ public final class RangeFormatter {
      * @return this builder
      */
     public Builder infinityStyle(InfinityStyle infinityStyle) {
-      this.infinityStyle = Objects.requireNonNull(infinityStyle);
+      this.infinityStyle = requireNonNull(infinityStyle);
       return this;
     }
 

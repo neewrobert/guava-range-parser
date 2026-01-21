@@ -1,10 +1,11 @@
 package io.github.guavarangeparser.core;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,6 +32,9 @@ import java.util.regex.Pattern;
  * Range<Integer> range = RangeParser.parse("[0..100)", Integer.class);
  * Range<Double> range = RangeParser.parse("(0.0..1.0]", Double.class);
  * }</pre>
+ *
+ * <p><b>Thread Safety:</b> Instances of this class are immutable and thread-safe.
+ * A single parser instance can be safely shared across multiple threads.
  *
  * @see Range
  * @see RangeFormatter
@@ -75,10 +79,12 @@ public final class RangeParser {
   private final boolean lenient;
 
   private RangeParser(Builder builder) {
-    this.typeAdapters = new HashMap<>(builder.typeAdapters);
-    this.lenient = builder.lenient;
-    // Register built-in adapters
+    // Register built-in adapters first, then overlay custom adapters
+    // This allows custom adapters to override built-in ones
+    this.typeAdapters = new HashMap<>();
     BuiltInTypeAdapters.registerAll(this.typeAdapters);
+    this.typeAdapters.putAll(builder.typeAdapters);
+    this.lenient = builder.lenient;
   }
 
   /**
@@ -114,8 +120,8 @@ public final class RangeParser {
    */
   @SuppressWarnings("unchecked")
   public <T extends Comparable<?>> Range<T> parseRange(String rangeString, Class<T> elementType) {
-    Objects.requireNonNull(rangeString, "rangeString must not be null");
-    Objects.requireNonNull(elementType, "elementType must not be null");
+    requireNonNull(rangeString, "rangeString must not be null");
+    requireNonNull(elementType, "elementType must not be null");
 
     String trimmed = rangeString.trim();
     if (trimmed.isEmpty()) {
@@ -169,7 +175,7 @@ public final class RangeParser {
     }
   }
 
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   private <T extends Comparable<?>> Range<T> buildRange(
       String lowerPart,
       String upperPart,
@@ -213,6 +219,16 @@ public final class RangeParser {
 
   /**
    * Builder for creating configured {@link RangeParser} instances.
+   *
+   * <p>The builder can be reused to create multiple parser instances. Each call to {@link #build()}
+   * creates an independent parser with its own copy of the type adapters.
+   *
+   * <p>Custom type adapters registered via {@link #registerType} take precedence over built-in
+   * adapters, allowing you to override the default parsing behavior for any type.
+   *
+   * <p><b>Thread Safety:</b> This builder is not thread-safe. Do not share builder instances
+   * across threads without external synchronization. However, the {@link RangeParser} instances
+   * created by this builder are immutable and thread-safe.
    */
   public static final class Builder {
     private final Map<Class<?>, TypeAdapter<?>> typeAdapters = new HashMap<>();

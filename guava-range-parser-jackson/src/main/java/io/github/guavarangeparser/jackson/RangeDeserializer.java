@@ -38,7 +38,7 @@ class RangeDeserializer extends JsonDeserializer<Range<?>> implements Contextual
   }
 
   @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public Range<?> deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
     JsonToken token = p.currentToken();
 
