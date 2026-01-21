@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Build and Test
+        run: mvn clean verify -Pdev
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Check code formatting
+        run: mvn com.spotify.fmt:fmt-maven-plugin:check
+
+      - name: Run Error Prone
+        run: mvn clean compile -Perrorprone
+
+  mutation-testing:
+    name: Mutation Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run Pitest
+        run: |
+          mvn test pitest:mutationCoverage -pl guava-range-parser-core -Ppitest
+          mvn test pitest:mutationCoverage -pl guava-range-parser-jackson -Ppitest
+          mvn test pitest:mutationCoverage -pl guava-range-parser-spring -Ppitest
+
+      - name: Upload mutation reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pitest-reports
+          path: '**/target/pit-reports/'
+          retention-days: 7

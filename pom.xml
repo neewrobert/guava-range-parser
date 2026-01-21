@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.guavarangeparser</groupId>
+    <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -42,6 +42,13 @@
         <url>https://github.com/neewrobert/guava-range-parser</url>
     </scm>
 
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/neewrobert/guava-range-parser/issues</url>
+    </issueManagement>
+
+    <!-- No distributionManagement needed - central-publishing-maven-plugin handles it -->
+
     <properties>
         <!-- Build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,23 +81,27 @@
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.23</fmt-maven-plugin.version>
+
+        <!-- Publishing -->
+        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <!-- Project modules -->
             <dependency>
-                <groupId>io.github.guavarangeparser</groupId>
+                <groupId>io.github.neewrobert</groupId>
                 <artifactId>guava-range-parser-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.guavarangeparser</groupId>
+                <groupId>io.github.neewrobert</groupId>
                 <artifactId>guava-range-parser-jackson</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.guavarangeparser</groupId>
+                <groupId>io.github.neewrobert</groupId>
                 <artifactId>guava-range-parser-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -179,6 +190,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <quiet>true</quiet>
+                    </configuration>
                     <executions>
                         <execution>
                             <id>attach-javadocs</id>
@@ -187,6 +202,31 @@
                             </goals>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.pitest</groupId>
@@ -201,10 +241,10 @@
                     </dependencies>
                     <configuration>
                         <targetClasses>
-                            <param>io.github.guavarangeparser.*</param>
+                            <param>io.github.neewrobert.guavarangeparser.*</param>
                         </targetClasses>
                         <targetTests>
-                            <param>io.github.guavarangeparser.*</param>
+                            <param>io.github.neewrobert.guavarangeparser.*</param>
                         </targetTests>
                         <mutators>
                             <mutator>DEFAULTS</mutator>
@@ -244,10 +284,61 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <!-- Profile for local development (skip signing) -->
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for release (enable signing) -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
         <!-- Profile for Error Prone static analysis -->
         <profile>
             <id>errorprone</id>

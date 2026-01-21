@@ -21,21 +21,21 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
 ```xml
 <!-- Core module (required) -->
 <dependency>
-    <groupId>io.github.guavarangeparser</groupId>
+    <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-core</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
 
 <!-- Jackson module (optional) -->
 <dependency>
-    <groupId>io.github.guavarangeparser</groupId>
+    <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-jackson</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
 
 <!-- Spring Boot module (optional) -->
 <dependency>
-    <groupId>io.github.guavarangeparser</groupId>
+    <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-spring</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 </dependency>
@@ -47,7 +47,7 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
 <dependencyManagement>
     <dependencies>
         <dependency>
-            <groupId>io.github.guavarangeparser</groupId>
+            <groupId>io.github.neewrobert</groupId>
             <artifactId>guava-range-parser-bom</artifactId>
             <version>0.1.0-SNAPSHOT</version>
             <type>pom</type>
@@ -62,7 +62,7 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
 ### Basic Parsing
 
 ```java
-import io.github.guavarangeparser.core.RangeParser;
+import io.github.neewrobert.guavarangeparser.core.RangeParser;
 import com.google.common.collect.Range;
 
 // Parse integer ranges
@@ -81,7 +81,7 @@ Range<Duration> duration = RangeParser.parse("[PT1H..PT24H)", Duration.class);
 ### Formatting
 
 ```java
-import io.github.guavarangeparser.core.RangeFormatter;
+import io.github.neewrobert.guavarangeparser.core.RangeFormatter;
 
 String notation = RangeFormatter.toString(Range.closedOpen(0, 100));
 // Returns: "[0..100)"
@@ -93,7 +93,7 @@ String unbounded = RangeFormatter.toString(Range.atLeast(100));
 ### Jackson Integration
 
 ```java
-import io.github.guavarangeparser.jackson.GuavaRangeParserModule;
+import io.github.neewrobert.guavarangeparser.jackson.GuavaRangeParserModule;
 
 ObjectMapper mapper = new ObjectMapper()
     .registerModule(new GuavaRangeParserModule());
