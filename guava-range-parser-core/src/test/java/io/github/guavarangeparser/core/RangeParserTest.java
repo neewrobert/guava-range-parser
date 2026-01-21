@@ -398,6 +398,71 @@ class RangeParserTest {
           .isInstanceOf(RangeParseException.class)
           .hasMessageContaining("exceeds maximum length");
     }
+
+    @Test
+    void rejectsInputWithMissingSeparator() {
+      // Input that could cause ReDoS with a vulnerable regex
+      String maliciousInput = "[" + "a".repeat(100) + "]";
+      assertThatThrownBy(() -> RangeParser.parse(maliciousInput, String.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void rejectsInputWithManyDotsButNoSeparator() {
+      // Input with many single dots that could confuse a greedy regex
+      String maliciousInput = "[" + "a.".repeat(50) + "b]";
+      assertThatThrownBy(() -> RangeParser.parse(maliciousInput, String.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void handlesLongInputWithValidFormatQuickly() {
+      // Long but valid input should be processed quickly (no exponential backtracking)
+      String longValue = "a".repeat(400);
+      String input = "[" + longValue + ".." + longValue + "]";
+
+      long start = System.nanoTime();
+      assertThatThrownBy(() -> RangeParser.parse(input, Integer.class))
+          .isInstanceOf(RangeParseException.class);
+      long elapsedMs = (System.nanoTime() - start) / 1_000_000;
+
+      // Should complete in under 100ms (ReDoS would take seconds or minutes)
+      assertThat(elapsedMs).isLessThan(100);
+    }
+
+    @Test
+    void rejectsClosedLowerBoundAtNegativeInfinity() {
+      assertThatThrownBy(() -> RangeParser.parse("[-∞..100]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("negative infinity bound must be open");
+    }
+
+    @Test
+    void rejectsClosedUpperBoundAtPositiveInfinity() {
+      assertThatThrownBy(() -> RangeParser.parse("[0..+∞]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("positive infinity bound must be open");
+    }
+
+    @Test
+    void rejectsLowerBoundGreaterThanUpperBound() {
+      assertThatThrownBy(() -> RangeParser.parse("[100..0]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("lower bound")
+          .hasMessageContaining("greater than upper bound");
+    }
+
+    @Test
+    void rejectsNullFromTypeAdapter() {
+      TypeAdapter<Integer> nullAdapter = s -> null;
+      RangeParser parser = RangeParser.builder().registerType(Integer.class, nullAdapter).build();
+
+      assertThatThrownBy(() -> parser.parseRange("[0..100]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("TypeAdapter returned null");
+    }
   }
 
   @Nested

@@ -1,5 +1,7 @@
 package io.github.guavarangeparser.spring;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import io.github.guavarangeparser.core.RangeParseException;
@@ -46,9 +48,10 @@ public class RangeConverterFactory implements GenericConverter {
    * Creates a new converter with a custom parser.
    *
    * @param parser the parser to use for conversion
+   * @throws NullPointerException if parser is null
    */
   public RangeConverterFactory(RangeParser parser) {
-    this.parser = parser;
+    this.parser = requireNonNull(parser, "parser must not be null");
   }
 
   @Override
@@ -63,6 +66,8 @@ public class RangeConverterFactory implements GenericConverter {
     if (source == null) {
       return null;
     }
+
+    requireNonNull(targetType, "targetType must not be null");
 
     String rangeString = source.toString();
     if (rangeString.isBlank()) {

@@ -162,6 +162,21 @@ class RangeConverterFactoryTest {
       assertThatThrownBy(() -> convert("0..100", Integer.class))
           .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @Test
+    void throwsOnNullParser() {
+      assertThatThrownBy(() -> new RangeConverterFactory(null))
+          .isInstanceOf(NullPointerException.class)
+          .hasMessageContaining("parser must not be null");
+    }
+
+    @Test
+    void throwsOnNullTargetType() {
+      assertThatThrownBy(
+              () -> converter.convert("[0..100]", TypeDescriptor.valueOf(String.class), null))
+          .isInstanceOf(NullPointerException.class)
+          .hasMessageContaining("targetType must not be null");
+    }
   }
 
   @Nested

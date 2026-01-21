@@ -6,8 +6,6 @@ import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Parser for converting string notation to Guava {@link Range} objects.
@@ -41,45 +39,16 @@ import java.util.regex.Pattern;
  */
 public final class RangeParser {
 
-  /** Pattern for positive infinity representations. */
-  private static final String POS_INF_PATTERN =
-      "(?:\\+∞|∞|\\+inf|inf|\\+INF|INF|\\+Infinity|Infinity)";
+  /** Range separator. */
+  private static final String SEPARATOR = "..";
 
-  /** Pattern for negative infinity representations. */
-  private static final String NEG_INF_PATTERN = "(?:-∞|-inf|-INF|-Infinity)";
+  /** Positive infinity representations. */
+  private static final java.util.Set<String> POSITIVE_INFINITY =
+      java.util.Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
 
-  /**
-   * Main pattern to parse range notation.
-   *
-   * <p>Groups:
-   *
-   * <ol>
-   *   <li>Opening bracket: '[' or '('
-   *   <li>Lower bound: value or negative infinity
-   *   <li>Upper bound: value or positive infinity
-   *   <li>Closing bracket: ']' or ')'
-   * </ol>
-   *
-   * <p>The pattern uses a non-greedy match for values and requires the ".." separator. Values can
-   * contain single dots (for decimals like "1.5") but not double dots.
-   */
-  private static final Pattern RANGE_PATTERN =
-      Pattern.compile(
-          "^([\\[(])"
-              + "("
-              + NEG_INF_PATTERN
-              + "|.+?)"
-              + "\\.\\."
-              + "("
-              + POS_INF_PATTERN
-              + "|.+?)"
-              + "([\\])])$");
-
-  /** Pattern to detect negative infinity. */
-  private static final Pattern NEG_INF_DETECT = Pattern.compile("^" + NEG_INF_PATTERN + "$");
-
-  /** Pattern to detect positive infinity. */
-  private static final Pattern POS_INF_DETECT = Pattern.compile("^" + POS_INF_PATTERN + "$");
+  /** Negative infinity representations. */
+  private static final java.util.Set<String> NEGATIVE_INFINITY =
+      java.util.Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
    * Maximum allowed length for input strings.
@@ -154,24 +123,60 @@ public final class RangeParser {
       trimmed = "[" + trimmed + ")";
     }
 
-    Matcher matcher = RANGE_PATTERN.matcher(trimmed);
-    if (!matcher.matches()) {
+    // Validate and extract brackets (manual parsing to avoid ReDoS)
+    if (trimmed.length() < 5) { // Minimum: "[a..b]"
       throw new RangeParseException(
           "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
           rangeString,
           0);
     }
 
-    String openingBracket = matcher.group(1);
-    String lowerPart = matcher.group(2).trim();
-    String upperPart = matcher.group(3).trim();
-    String closingBracket = matcher.group(4);
+    char openingBracket = trimmed.charAt(0);
+    char closingBracket = trimmed.charAt(trimmed.length() - 1);
 
-    BoundType lowerBoundType = "[".equals(openingBracket) ? BoundType.CLOSED : BoundType.OPEN;
-    BoundType upperBoundType = "]".equals(closingBracket) ? BoundType.CLOSED : BoundType.OPEN;
+    if ((openingBracket != '[' && openingBracket != '(')
+        || (closingBracket != ']' && closingBracket != ')')) {
+      throw new RangeParseException(
+          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
+          rangeString,
+          0);
+    }
 
-    boolean lowerUnbounded = NEG_INF_DETECT.matcher(lowerPart).matches();
-    boolean upperUnbounded = POS_INF_DETECT.matcher(upperPart).matches();
+    // Find the separator ".." - search from position 1 to avoid matching decimal points
+    String content = trimmed.substring(1, trimmed.length() - 1);
+    int separatorIndex = content.indexOf(SEPARATOR);
+    if (separatorIndex == -1) {
+      throw new RangeParseException(
+          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
+          rangeString,
+          0);
+    }
+
+    String lowerPart = content.substring(0, separatorIndex).trim();
+    String upperPart = content.substring(separatorIndex + SEPARATOR.length()).trim();
+
+    if (lowerPart.isEmpty() || upperPart.isEmpty()) {
+      throw new RangeParseException(
+          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
+          rangeString,
+          0);
+    }
+
+    BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
+    BoundType upperBoundType = closingBracket == ']' ? BoundType.CLOSED : BoundType.OPEN;
+
+    boolean lowerUnbounded = NEGATIVE_INFINITY.contains(lowerPart);
+    boolean upperUnbounded = POSITIVE_INFINITY.contains(upperPart);
+
+    // Validate: infinity bounds must be open (mathematical convention)
+    if (lowerUnbounded && lowerBoundType == BoundType.CLOSED) {
+      throw new RangeParseException(
+          "Invalid range: negative infinity bound must be open '(' not closed '['", rangeString, 0);
+    }
+    if (upperUnbounded && upperBoundType == BoundType.CLOSED) {
+      throw new RangeParseException(
+          "Invalid range: positive infinity bound must be open ')' not closed ']'", rangeString, 0);
+    }
 
     TypeAdapter<T> adapter = (TypeAdapter<T>) typeAdapters.get(elementType);
     if (adapter == null) {
@@ -213,19 +218,33 @@ public final class RangeParser {
 
     // Case: (-∞..b] or (-∞..b)
     if (lowerUnbounded) {
-      T upper = adapter.parse(upperPart);
+      T upper = parseAndValidate(adapter, upperPart, "upper");
       return upperBoundType == BoundType.CLOSED ? Range.atMost(upper) : Range.lessThan(upper);
     }
 
     // Case: [a..+∞) or (a..+∞)
     if (upperUnbounded) {
-      T lower = adapter.parse(lowerPart);
+      T lower = parseAndValidate(adapter, lowerPart, "lower");
       return lowerBoundType == BoundType.CLOSED ? Range.atLeast(lower) : Range.greaterThan(lower);
     }
 
     // Case: bounded range
-    T lower = adapter.parse(lowerPart);
-    T upper = adapter.parse(upperPart);
+    T lower = parseAndValidate(adapter, lowerPart, "lower");
+    T upper = parseAndValidate(adapter, upperPart, "upper");
+
+    // Validate lower <= upper (compare using Comparable)
+    @SuppressWarnings("unchecked")
+    Comparable<Object> comparableLower = (Comparable<Object>) lower;
+    if (comparableLower.compareTo(upper) > 0) {
+      throw new RangeParseException(
+          "Invalid range: lower bound ("
+              + lowerPart
+              + ") is greater than upper bound ("
+              + upperPart
+              + ")",
+          lowerPart + ".." + upperPart,
+          0);
+    }
 
     if (lowerBoundType == BoundType.CLOSED && upperBoundType == BoundType.CLOSED) {
       return Range.closed(lower, upper);
@@ -236,6 +255,16 @@ public final class RangeParser {
     } else {
       return Range.open(lower, upper);
     }
+  }
+
+  /** Parses a value using the adapter and validates the result is not null. */
+  private <T> T parseAndValidate(TypeAdapter<T> adapter, String value, String boundName) {
+    T result = adapter.parse(value);
+    if (result == null) {
+      throw new RangeParseException(
+          "TypeAdapter returned null for " + boundName + " bound value: " + value, value, 0);
+    }
+    return result;
   }
 
   /**
