@@ -61,7 +61,7 @@
         <spring-boot.version>3.4.1</spring-boot.version>
 
         <!-- Test dependency versions -->
-        <junit-jupiter.version>5.11.4</junit-jupiter.version>
+        <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <assertj.version>3.27.3</assertj.version>
 
         <!-- Plugin versions -->
