@@ -1,9 +1,8 @@
 /**
  * Jackson module for Guava Range string notation serialization/deserialization.
  *
- * <p>This package provides integration with Jackson for serializing and deserializing
- * Guava {@link com.google.common.collect.Range} objects using standard mathematical
- * interval notation.
+ * <p>This package provides integration with Jackson for serializing and deserializing Guava {@link
+ * com.google.common.collect.Range} objects using standard mathematical interval notation.
  *
  * <h2>Quick Start</h2>
  *

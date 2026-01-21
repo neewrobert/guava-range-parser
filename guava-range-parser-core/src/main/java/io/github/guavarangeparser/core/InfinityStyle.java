@@ -3,8 +3,8 @@ package io.github.guavarangeparser.core;
 /**
  * Defines the style for representing infinity values in range notation.
  *
- * <p>When formatting ranges with unbounded endpoints, this enum determines
- * how infinity is represented in the output string.
+ * <p>When formatting ranges with unbounded endpoints, this enum determines how infinity is
+ * represented in the output string.
  *
  * @see RangeFormatter
  */

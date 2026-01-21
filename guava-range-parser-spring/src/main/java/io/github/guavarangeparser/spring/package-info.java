@@ -1,8 +1,8 @@
 /**
  * Spring Boot auto-configuration for Guava Range converters.
  *
- * <p>This package provides seamless integration with Spring Boot for converting
- * String properties to Guava {@link com.google.common.collect.Range} objects.
+ * <p>This package provides seamless integration with Spring Boot for converting String properties
+ * to Guava {@link com.google.common.collect.Range} objects.
  *
  * <h2>Quick Start</h2>
  *

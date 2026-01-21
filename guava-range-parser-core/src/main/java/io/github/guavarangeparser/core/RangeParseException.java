@@ -3,8 +3,8 @@ package io.github.guavarangeparser.core;
 /**
  * Exception thrown when a range string cannot be parsed.
  *
- * <p>This exception provides detailed information about the parsing failure,
- * including the original input string and the position where the error occurred.
+ * <p>This exception provides detailed information about the parsing failure, including the original
+ * input string and the position where the error occurred.
  *
  * @see RangeParser
  */

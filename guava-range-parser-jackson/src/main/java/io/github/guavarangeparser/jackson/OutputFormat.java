@@ -18,6 +18,7 @@ public enum OutputFormat {
    * Serialize as JSON object with explicit fields.
    *
    * <p>Example:
+   *
    * <pre>{@code
    * {
    *   "lowerEndpoint": 0,

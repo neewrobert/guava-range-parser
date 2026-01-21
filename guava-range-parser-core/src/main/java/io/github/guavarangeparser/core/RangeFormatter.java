@@ -95,9 +95,7 @@ public final class RangeFormatter {
     return sb.toString();
   }
 
-  /**
-   * Builder for creating configured {@link RangeFormatter} instances.
-   */
+  /** Builder for creating configured {@link RangeFormatter} instances. */
   public static final class Builder {
     private InfinityStyle infinityStyle = InfinityStyle.SYMBOL;
 

@@ -8,9 +8,7 @@ import io.github.guavarangeparser.core.InfinityStyle;
 import io.github.guavarangeparser.core.RangeFormatter;
 import java.io.IOException;
 
-/**
- * Jackson serializer for Guava Range objects.
- */
+/** Jackson serializer for Guava Range objects. */
 class RangeSerializer extends JsonSerializer<Range<?>> {
 
   private final OutputFormat outputFormat;

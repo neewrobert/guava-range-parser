@@ -8,9 +8,7 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import com.google.common.collect.Range;
 import io.github.guavarangeparser.core.InfinityStyle;
 
-/**
- * Jackson serializers provider for Guava Range types.
- */
+/** Jackson serializers provider for Guava Range types. */
 class RangeSerializers extends Serializers.Base {
 
   private final OutputFormat outputFormat;

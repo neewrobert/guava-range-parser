@@ -33,8 +33,8 @@ import java.util.regex.Pattern;
  * Range<Double> range = RangeParser.parse("(0.0..1.0]", Double.class);
  * }</pre>
  *
- * <p><b>Thread Safety:</b> Instances of this class are immutable and thread-safe.
- * A single parser instance can be safely shared across multiple threads.
+ * <p><b>Thread Safety:</b> Instances of this class are immutable and thread-safe. A single parser
+ * instance can be safely shared across multiple threads.
  *
  * @see Range
  * @see RangeFormatter
@@ -42,7 +42,8 @@ import java.util.regex.Pattern;
 public final class RangeParser {
 
   /** Pattern for positive infinity representations. */
-  private static final String POS_INF_PATTERN = "(?:\\+∞|∞|\\+inf|inf|\\+INF|INF|\\+Infinity|Infinity)";
+  private static final String POS_INF_PATTERN =
+      "(?:\\+∞|∞|\\+inf|inf|\\+INF|INF|\\+Infinity|Infinity)";
 
   /** Pattern for negative infinity representations. */
   private static final String NEG_INF_PATTERN = "(?:-∞|-inf|-INF|-Infinity)";
@@ -51,6 +52,7 @@ public final class RangeParser {
    * Main pattern to parse range notation.
    *
    * <p>Groups:
+   *
    * <ol>
    *   <li>Opening bracket: '[' or '('
    *   <li>Lower bound: value or negative infinity
@@ -58,15 +60,19 @@ public final class RangeParser {
    *   <li>Closing bracket: ']' or ')'
    * </ol>
    *
-   * <p>The pattern uses a non-greedy match for values and requires the ".." separator.
-   * Values can contain single dots (for decimals like "1.5") but not double dots.
+   * <p>The pattern uses a non-greedy match for values and requires the ".." separator. Values can
+   * contain single dots (for decimals like "1.5") but not double dots.
    */
   private static final Pattern RANGE_PATTERN =
       Pattern.compile(
           "^([\\[(])"
-              + "(" + NEG_INF_PATTERN + "|.+?)"
+              + "("
+              + NEG_INF_PATTERN
+              + "|.+?)"
               + "\\.\\."
-              + "(" + POS_INF_PATTERN + "|.+?)"
+              + "("
+              + POS_INF_PATTERN
+              + "|.+?)"
               + "([\\])])$");
 
   /** Pattern to detect negative infinity. */
@@ -78,8 +84,8 @@ public final class RangeParser {
   /**
    * Maximum allowed length for input strings.
    *
-   * <p>This limit prevents denial-of-service attacks via extremely long input strings
-   * that could cause memory exhaustion or excessive regex processing time.
+   * <p>This limit prevents denial-of-service attacks via extremely long input strings that could
+   * cause memory exhaustion or excessive regex processing time.
    */
   private static final int MAX_INPUT_LENGTH = 1000;
 
@@ -241,9 +247,9 @@ public final class RangeParser {
    * <p>Custom type adapters registered via {@link #registerType} take precedence over built-in
    * adapters, allowing you to override the default parsing behavior for any type.
    *
-   * <p><b>Thread Safety:</b> This builder is not thread-safe. Do not share builder instances
-   * across threads without external synchronization. However, the {@link RangeParser} instances
-   * created by this builder are immutable and thread-safe.
+   * <p><b>Thread Safety:</b> This builder is not thread-safe. Do not share builder instances across
+   * threads without external synchronization. However, the {@link RangeParser} instances created by
+   * this builder are immutable and thread-safe.
    */
   public static final class Builder {
     private final Map<Class<?>, TypeAdapter<?>> typeAdapters = new HashMap<>();
@@ -268,6 +274,7 @@ public final class RangeParser {
      * Enables lenient parsing mode.
      *
      * <p>In lenient mode:
+     *
      * <ul>
      *   <li>Bracket-less notation like "0..100" is accepted (treated as [0..100))
      *   <li>Various infinity representations are accepted

@@ -121,7 +121,8 @@ class RangeFormatterTest {
 
     @Test
     void formatDurationRange() {
-      String notation = RangeFormatter.toString(Range.closedOpen(Duration.ZERO, Duration.ofHours(24)));
+      String notation =
+          RangeFormatter.toString(Range.closedOpen(Duration.ZERO, Duration.ofHours(24)));
       assertThat(notation).isEqualTo("[PT0S..PT24H)");
     }
 

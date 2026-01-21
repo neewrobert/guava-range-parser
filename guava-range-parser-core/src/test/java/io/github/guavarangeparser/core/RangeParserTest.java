@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class RangeParserTest {
@@ -83,7 +82,17 @@ class RangeParserTest {
   class InfinityVariants {
 
     @ParameterizedTest
-    @ValueSource(strings = {"[0..+∞)", "[0..∞)", "[0..+inf)", "[0..inf)", "[0..+INF)", "[0..INF)", "[0..+Infinity)", "[0..Infinity)"})
+    @ValueSource(
+        strings = {
+          "[0..+∞)",
+          "[0..∞)",
+          "[0..+inf)",
+          "[0..inf)",
+          "[0..+INF)",
+          "[0..INF)",
+          "[0..+Infinity)",
+          "[0..Infinity)"
+        })
     void parsePositiveInfinityVariants(String notation) {
       Range<Integer> range = RangeParser.parse(notation, Integer.class);
       assertThat(range).isEqualTo(Range.atLeast(0));
@@ -98,6 +107,56 @@ class RangeParserTest {
   }
 
   @Nested
+  class LongRanges {
+
+    @Test
+    void parseClosed() {
+      Range<Long> range = RangeParser.parse("[0..9999999999]", Long.class);
+      assertThat(range).isEqualTo(Range.closed(0L, 9999999999L));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<Long> range = RangeParser.parse("[1000000000..+∞)", Long.class);
+      assertThat(range).isEqualTo(Range.atLeast(1000000000L));
+    }
+
+    @Test
+    void parseNegativeValues() {
+      Range<Long> range = RangeParser.parse("[-9999999999..-1]", Long.class);
+      assertThat(range).isEqualTo(Range.closed(-9999999999L, -1L));
+    }
+  }
+
+  @Nested
+  class StringRanges {
+
+    @Test
+    void parseClosed() {
+      Range<String> range = RangeParser.parse("[a..z]", String.class);
+      assertThat(range).isEqualTo(Range.closed("a", "z"));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<String> range = RangeParser.parse("[m..+∞)", String.class);
+      assertThat(range).isEqualTo(Range.atLeast("m"));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<String> range = RangeParser.parse("(-∞..m]", String.class);
+      assertThat(range).isEqualTo(Range.atMost("m"));
+    }
+
+    @Test
+    void parseMultiCharacterStrings() {
+      Range<String> range = RangeParser.parse("[apple..zebra]", String.class);
+      assertThat(range).isEqualTo(Range.closed("apple", "zebra"));
+    }
+  }
+
+  @Nested
   class DoubleRanges {
 
     @Test
@@ -107,9 +166,39 @@ class RangeParserTest {
     }
 
     @Test
+    void parseOpenClosed() {
+      Range<Double> range = RangeParser.parse("(0.1..1.0]", Double.class);
+      assertThat(range).isEqualTo(Range.openClosed(0.1, 1.0));
+    }
+
+    @Test
     void parseWithScientificNotation() {
       Range<Double> range = RangeParser.parse("[1e-10..1e10)", Double.class);
       assertThat(range).isEqualTo(Range.closedOpen(1e-10, 1e10));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<Double> range = RangeParser.parse("[0.5..+∞)", Double.class);
+      assertThat(range).isEqualTo(Range.atLeast(0.5));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<Double> range = RangeParser.parse("(-∞..99.9]", Double.class);
+      assertThat(range).isEqualTo(Range.atMost(99.9));
+    }
+
+    @Test
+    void parseAll() {
+      Range<Double> range = RangeParser.parse("(-∞..+∞)", Double.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+
+    @Test
+    void parseNegativeValues() {
+      Range<Double> range = RangeParser.parse("[-10.5..-0.5)", Double.class);
+      assertThat(range).isEqualTo(Range.closedOpen(-10.5, -0.5));
     }
   }
 
@@ -127,15 +216,59 @@ class RangeParserTest {
       Range<Duration> range = RangeParser.parse("[PT1H..+∞)", Duration.class);
       assertThat(range).isEqualTo(Range.atLeast(Duration.ofHours(1)));
     }
+
+    @Test
+    void parseAtMost() {
+      Range<Duration> range = RangeParser.parse("(-∞..PT12H]", Duration.class);
+      assertThat(range).isEqualTo(Range.atMost(Duration.ofHours(12)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<Duration> range = RangeParser.parse("(-∞..+∞)", Duration.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+
+    @Test
+    void parseNegativeDuration() {
+      Range<Duration> range = RangeParser.parse("[PT-1H..PT1H]", Duration.class);
+      assertThat(range).isEqualTo(Range.closed(Duration.ofHours(-1), Duration.ofHours(1)));
+    }
   }
 
   @Nested
   class LocalDateRanges {
 
     @Test
-    void parseClosedOpen() {
+    void parseClosed() {
       Range<LocalDate> range = RangeParser.parse("[2024-01-01..2024-12-31]", LocalDate.class);
-      assertThat(range).isEqualTo(Range.closed(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)));
+      assertThat(range)
+          .isEqualTo(Range.closed(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<LocalDate> range = RangeParser.parse("[2024-01-01..2024-12-31)", LocalDate.class);
+      assertThat(range)
+          .isEqualTo(Range.closedOpen(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<LocalDate> range = RangeParser.parse("[2024-01-01..+∞)", LocalDate.class);
+      assertThat(range).isEqualTo(Range.atLeast(LocalDate.of(2024, 1, 1)));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<LocalDate> range = RangeParser.parse("(-∞..2024-12-31]", LocalDate.class);
+      assertThat(range).isEqualTo(Range.atMost(LocalDate.of(2024, 12, 31)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<LocalDate> range = RangeParser.parse("(-∞..+∞)", LocalDate.class);
+      assertThat(range).isEqualTo(Range.all());
     }
   }
 
@@ -145,7 +278,40 @@ class RangeParserTest {
     @Test
     void parseClosedOpen() {
       Range<BigDecimal> range = RangeParser.parse("[0.00..100.00)", BigDecimal.class);
-      assertThat(range).isEqualTo(Range.closedOpen(new BigDecimal("0.00"), new BigDecimal("100.00")));
+      assertThat(range)
+          .isEqualTo(Range.closedOpen(new BigDecimal("0.00"), new BigDecimal("100.00")));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<BigDecimal> range = RangeParser.parse("[0.01..+∞)", BigDecimal.class);
+      assertThat(range).isEqualTo(Range.atLeast(new BigDecimal("0.01")));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<BigDecimal> range = RangeParser.parse("(-∞..999.99]", BigDecimal.class);
+      assertThat(range).isEqualTo(Range.atMost(new BigDecimal("999.99")));
+    }
+
+    @Test
+    void parseAll() {
+      Range<BigDecimal> range = RangeParser.parse("(-∞..+∞)", BigDecimal.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+
+    @Test
+    void parseNegativeValues() {
+      Range<BigDecimal> range = RangeParser.parse("[-100.50..-0.01]", BigDecimal.class);
+      assertThat(range).isEqualTo(Range.closed(new BigDecimal("-100.50"), new BigDecimal("-0.01")));
+    }
+
+    @Test
+    void parseHighPrecision() {
+      Range<BigDecimal> range = RangeParser.parse("[0.123456789..0.987654321)", BigDecimal.class);
+      assertThat(range)
+          .isEqualTo(
+              Range.closedOpen(new BigDecimal("0.123456789"), new BigDecimal("0.987654321")));
     }
   }
 
@@ -324,8 +490,7 @@ class RangeParserTest {
         }
       }
 
-      RangeParser parser =
-          RangeParser.builder().registerType(Money.class, Money::parse).build();
+      RangeParser parser = RangeParser.builder().registerType(Money.class, Money::parse).build();
 
       Range<Money> range = parser.parseRange("[$10..$100)", Money.class);
       assertThat(range).isEqualTo(Range.closedOpen(new Money(1000), new Money(10000)));
@@ -397,9 +562,8 @@ class RangeParserTest {
       // Custom Integer adapter that doubles the value
       TypeAdapter<Integer> doublingAdapter = s -> Integer.parseInt(s) * 2;
 
-      RangeParser parser = RangeParser.builder()
-          .registerType(Integer.class, doublingAdapter)
-          .build();
+      RangeParser parser =
+          RangeParser.builder().registerType(Integer.class, doublingAdapter).build();
 
       // If override works, [5..10) should become [10..20)
       Range<Integer> range = parser.parseRange("[5..10)", Integer.class);

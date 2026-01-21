@@ -7,8 +7,8 @@ import io.github.guavarangeparser.core.InfinityStyle;
 /**
  * Jackson module for Guava Range string notation serialization/deserialization.
  *
- * <p>This module allows Jackson to serialize and deserialize Guava Range objects
- * using the standard mathematical interval notation (e.g., "[0..100)", "(-∞..+∞)").
+ * <p>This module allows Jackson to serialize and deserialize Guava Range objects using the standard
+ * mathematical interval notation (e.g., "[0..100)", "(-∞..+∞)").
  *
  * <p>Example usage:
  *
@@ -34,9 +34,7 @@ public class GuavaRangeParserModule extends Module {
   private final OutputFormat outputFormat;
   private final InfinityStyle infinityStyle;
 
-  /**
-   * Creates a new module with default settings.
-   */
+  /** Creates a new module with default settings. */
   public GuavaRangeParserModule() {
     this(OutputFormat.STRING_NOTATION, InfinityStyle.SYMBOL);
   }
@@ -89,9 +87,7 @@ public class GuavaRangeParserModule extends Module {
     return infinityStyle;
   }
 
-  /**
-   * Builder for creating configured {@link GuavaRangeParserModule} instances.
-   */
+  /** Builder for creating configured {@link GuavaRangeParserModule} instances. */
   public static final class Builder {
     private OutputFormat outputFormat = OutputFormat.STRING_NOTATION;
     private InfinityStyle infinityStyle = InfinityStyle.SYMBOL;

@@ -1,19 +1,18 @@
 package io.github.guavarangeparser.spring;
 
+import com.google.common.collect.Range;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.Bean;
 
-import com.google.common.collect.Range;
-
 /**
  * Auto-configuration for Guava Range converters in Spring Boot applications.
  *
- * <p>This configuration automatically registers a {@link RangeConverterFactory} bean
- * that enables conversion of String properties to Guava Range objects using standard
- * mathematical interval notation.
+ * <p>This configuration automatically registers a {@link RangeConverterFactory} bean that enables
+ * conversion of String properties to Guava Range objects using standard mathematical interval
+ * notation.
  *
  * <p>To use, simply add the dependency to your project:
  *

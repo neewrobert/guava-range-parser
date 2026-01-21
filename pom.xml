@@ -71,6 +71,9 @@
         <!-- Pitest mutation testing -->
         <pitest.version>1.17.4</pitest.version>
         <pitest-junit5.version>1.2.1</pitest-junit5.version>
+
+        <!-- Code formatting -->
+        <fmt-maven-plugin.version>2.23</fmt-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -214,6 +217,21 @@
                         <verbose>false</verbose>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>com.spotify.fmt</groupId>
+                    <artifactId>fmt-maven-plugin</artifactId>
+                    <version>${fmt-maven-plugin.version}</version>
+                    <configuration>
+                        <style>google</style>
+                        <verbose>false</verbose>
+                    </configuration>
+                </plugin>
+                <!-- Note: Run with MAVEN_OPTS if needed for JDK 17+:
+                     export MAVEN_OPTS="-\-add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+                     -\-add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
+                     -\-add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED
+                     -\-add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+                     -\-add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" -->
             </plugins>
         </pluginManagement>
 

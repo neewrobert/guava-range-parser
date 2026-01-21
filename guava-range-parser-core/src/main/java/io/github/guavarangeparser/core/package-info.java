@@ -1,8 +1,8 @@
 /**
  * Core parsing and formatting functionality for Guava Range objects.
  *
- * <p>This package provides the main API for converting between string notation
- * and Guava {@link com.google.common.collect.Range} objects:
+ * <p>This package provides the main API for converting between string notation and Guava {@link
+ * com.google.common.collect.Range} objects:
  *
  * <ul>
  *   <li>{@link io.github.guavarangeparser.core.RangeParser} - Parses string notation to Range

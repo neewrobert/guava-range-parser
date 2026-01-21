@@ -7,9 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.collect.Range;
 
-/**
- * Jackson deserializers provider for Guava Range types.
- */
+/** Jackson deserializers provider for Guava Range types. */
 class RangeDeserializers extends Deserializers.Base {
 
   @Override

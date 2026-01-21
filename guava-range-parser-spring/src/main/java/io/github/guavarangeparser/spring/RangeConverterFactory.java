@@ -12,8 +12,8 @@ import org.springframework.core.convert.converter.GenericConverter;
 /**
  * Spring converter for converting String to Guava {@link Range} objects.
  *
- * <p>This converter uses standard Guava Range notation (e.g., "[0..100)", "(-∞..+∞)")
- * and supports all built-in types provided by {@link RangeParser}.
+ * <p>This converter uses standard Guava Range notation (e.g., "[0..100)", "(-∞..+∞)") and supports
+ * all built-in types provided by {@link RangeParser}.
  *
  * <p>Example configuration usage:
  *
@@ -37,9 +37,7 @@ public class RangeConverterFactory implements GenericConverter {
 
   private final RangeParser parser;
 
-  /**
-   * Creates a new converter with default parser settings.
-   */
+  /** Creates a new converter with default parser settings. */
   public RangeConverterFactory() {
     this(RangeParser.builder().build());
   }

@@ -18,8 +18,8 @@ import java.util.Map;
  *
  * <ul>
  *   <li>Numeric types: Integer, Long, Short, Byte, Double, Float, BigInteger, BigDecimal
- *   <li>Temporal types: Duration, Instant, LocalDate, LocalDateTime, LocalTime,
- *       ZonedDateTime, OffsetDateTime
+ *   <li>Temporal types: Duration, Instant, LocalDate, LocalDateTime, LocalTime, ZonedDateTime,
+ *       OffsetDateTime
  *   <li>Other types: String, Character
  * </ul>
  *
@@ -56,8 +56,7 @@ public final class BuiltInTypeAdapters {
   public static final TypeAdapter<Character> CHARACTER =
       s -> {
         if (s.length() != 1) {
-          throw new IllegalArgumentException(
-              "Expected single character but got: '" + s + "'");
+          throw new IllegalArgumentException("Expected single character but got: '" + s + "'");
         }
         return s.charAt(0);
       };
