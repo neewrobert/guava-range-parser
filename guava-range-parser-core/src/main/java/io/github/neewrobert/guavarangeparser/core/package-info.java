@@ -5,10 +5,14 @@
  * com.google.common.collect.Range} objects:
  *
  * <ul>
- *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeParser} - Parses string notation to Range
- *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeFormatter} - Formats Range to string notation
- *   <li>{@link io.github.neewrobert.guavarangeparser.core.TypeAdapter} - Interface for custom type parsing
- *   <li>{@link io.github.neewrobert.guavarangeparser.core.BuiltInTypeAdapters} - Pre-configured adapters
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeParser} - Parses string notation to
+ *       Range
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.RangeFormatter} - Formats Range to string
+ *       notation
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.TypeAdapter} - Interface for custom type
+ *       parsing
+ *   <li>{@link io.github.neewrobert.guavarangeparser.core.BuiltInTypeAdapters} - Pre-configured
+ *       adapters
  * </ul>
  *
  * <h2>Quick Start</h2>
