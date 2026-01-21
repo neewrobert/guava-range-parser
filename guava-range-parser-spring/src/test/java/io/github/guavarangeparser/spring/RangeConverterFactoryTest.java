@@ -209,6 +209,19 @@ class RangeConverterFactoryTest {
       // Should parse as Long, not Integer
       assertThat(result).isEqualTo(Range.closed(0L, 100L));
     }
+
+    @Test
+    void throwsWhenGenericTypeCannotBeResolved() {
+      // Raw Range type without generic parameter
+      TypeDescriptor rawRangeType = TypeDescriptor.valueOf(Range.class);
+
+      assertThatThrownBy(
+              () ->
+                  converter.convert("[0..100]", TypeDescriptor.valueOf(String.class), rawRangeType))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Cannot determine Range element type")
+          .hasMessageContaining("parameterized type");
+    }
   }
 
   private Range<?> convert(String source, Class<?> elementType) {

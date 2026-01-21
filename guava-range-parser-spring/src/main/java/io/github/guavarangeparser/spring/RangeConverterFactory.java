@@ -94,10 +94,15 @@ public class RangeConverterFactory implements GenericConverter {
     ResolvableType resolvableType = targetType.getResolvableType();
     ResolvableType generic = resolvableType.getGeneric(0);
     Class<?> resolved = generic.resolve();
-    if (resolved != null) {
-      return resolved;
+    // Check if type could not be resolved, or resolved to just Comparable (the type bound)
+    // which indicates a raw Range type without explicit generic parameter
+    if (resolved == null || resolved == Comparable.class) {
+      throw new IllegalArgumentException(
+          "Cannot determine Range element type. "
+              + "Use a parameterized type like Range<Integer> instead of raw Range. "
+              + "Target type: "
+              + targetType);
     }
-    // Default to Integer if no generic type info available
-    return Integer.class;
+    return resolved;
   }
 }
