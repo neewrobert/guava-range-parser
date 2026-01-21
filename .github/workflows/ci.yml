@@ -86,11 +86,14 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Build and install modules
+        run: mvn install -DskipTests -Pdev
+
       - name: Run Pitest
         run: |
-          mvn test pitest:mutationCoverage -pl guava-range-parser-core -Ppitest
-          mvn test pitest:mutationCoverage -pl guava-range-parser-jackson -Ppitest
-          mvn test pitest:mutationCoverage -pl guava-range-parser-spring -Ppitest
+          mvn pitest:mutationCoverage -pl guava-range-parser-core -Ppitest
+          mvn pitest:mutationCoverage -pl guava-range-parser-jackson -Ppitest
+          mvn pitest:mutationCoverage -pl guava-range-parser-spring -Ppitest
 
       - name: Upload mutation reports
         uses: actions/upload-artifact@v4
