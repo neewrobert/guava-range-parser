@@ -56,38 +56,38 @@
         <maven.compiler.release>17</maven.compiler.release>
 
         <!-- Dependency versions -->
-        <guava.version>33.4.0-jre</guava.version>
-        <jackson.version>2.18.2</jackson.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <jackson.version>2.21.0</jackson.version>
         <spring-boot.version>3.4.1</spring-boot.version>
 
         <!-- Test dependency versions -->
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
-        <assertj.version>3.27.3</assertj.version>
+        <assertj.version>3.27.7</assertj.version>
 
         <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
 
         <!-- Error Prone versions -->
-        <error-prone.version>2.36.0</error-prone.version>
-        <error-prone-support.version>0.19.1</error-prone-support.version>
+        <error-prone.version>2.46.0</error-prone.version>
+        <error-prone-support.version>0.28.0</error-prone-support.version>
 
         <!-- Pitest mutation testing -->
-        <pitest.version>1.17.4</pitest.version>
-        <pitest-junit5.version>1.2.1</pitest-junit5.version>
+        <pitest.version>1.22.0</pitest.version>
+        <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Code formatting -->
-        <fmt-maven-plugin.version>2.23</fmt-maven-plugin.version>
+        <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
 
         <!-- Code coverage -->
-        <jacoco.version>0.8.12</jacoco.version>
+        <jacoco.version>0.8.14</jacoco.version>
 
         <!-- Publishing -->
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
     </properties>
 
     <dependencyManagement>
