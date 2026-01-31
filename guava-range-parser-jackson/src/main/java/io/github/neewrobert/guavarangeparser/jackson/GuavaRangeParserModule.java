@@ -1,5 +1,7 @@
 package io.github.neewrobert.guavarangeparser.jackson;
 
+import static java.util.Objects.requireNonNull;
+
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.Module;
 import io.github.neewrobert.guavarangeparser.core.InfinityStyle;
@@ -36,7 +38,6 @@ public class GuavaRangeParserModule extends Module {
 
   private final InfinityStyle infinityStyle;
 
-  /** Creates a new module with default settings. */
   public GuavaRangeParserModule() {
     this(InfinityStyle.SYMBOL);
   }
@@ -92,7 +93,7 @@ public class GuavaRangeParserModule extends Module {
      * @return this builder
      */
     public Builder infinityStyle(InfinityStyle infinityStyle) {
-      this.infinityStyle = infinityStyle;
+      this.infinityStyle = requireNonNull(infinityStyle, "infinityStyle must not be null");
       return this;
     }
 

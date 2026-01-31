@@ -32,10 +32,10 @@ import java.lang.annotation.Target;
  *
  * @see RangeValidator
  */
-@Target({FIELD, METHOD, PARAMETER, ANNOTATION_TYPE, TYPE_USE})
-@Retention(RUNTIME)
 @Constraint(validatedBy = RangeValidator.class)
 @Documented
+@Retention(RUNTIME)
+@Target({ANNOTATION_TYPE, FIELD, METHOD, PARAMETER, TYPE_USE})
 public @interface ValidRange {
 
   /**

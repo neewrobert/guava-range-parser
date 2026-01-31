@@ -40,14 +40,11 @@ import java.util.Set;
  */
 public final class RangeParser {
 
-  /** Range separator. */
   private static final String SEPARATOR = "..";
 
-  /** Positive infinity representations. */
   private static final Set<String> POSITIVE_INFINITY =
       Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
 
-  /** Negative infinity representations. */
   private static final Set<String> NEGATIVE_INFINITY = Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
@@ -58,15 +55,21 @@ public final class RangeParser {
    */
   private static final int MAX_INPUT_LENGTH = 1000;
 
+  private static final String INVALID_FORMAT_MESSAGE =
+      "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.";
+
+  private static final RangeParser DEFAULT_INSTANCE = builder().build();
+
   private final Map<Class<?>, TypeAdapter<?>> typeAdapters;
   private final boolean lenient;
 
   private RangeParser(Builder builder) {
     // Register built-in adapters first, then overlay custom adapters
     // This allows custom adapters to override built-in ones
-    this.typeAdapters = new HashMap<>();
-    BuiltInTypeAdapters.registerAll(this.typeAdapters);
-    this.typeAdapters.putAll(builder.typeAdapters);
+    Map<Class<?>, TypeAdapter<?>> adapters = new HashMap<>();
+    BuiltInTypeAdapters.registerAll(adapters);
+    adapters.putAll(builder.typeAdapters);
+    this.typeAdapters = Map.copyOf(adapters);
     this.lenient = builder.lenient;
   }
 
@@ -89,7 +92,7 @@ public final class RangeParser {
    * @throws RangeParseException if the string cannot be parsed
    */
   public static <T extends Comparable<?>> Range<T> parse(String rangeString, Class<T> elementType) {
-    return builder().build().parseRange(rangeString, elementType);
+    return DEFAULT_INSTANCE.parseRange(rangeString, elementType);
   }
 
   /**
@@ -109,7 +112,7 @@ public final class RangeParser {
     if (rangeString.length() > MAX_INPUT_LENGTH) {
       throw new RangeParseException(
           "Input exceeds maximum length of " + MAX_INPUT_LENGTH + " characters",
-          rangeString.substring(0, Math.min(50, rangeString.length())) + "...",
+          rangeString.substring(0, 50) + "...",
           0);
     }
 
@@ -118,17 +121,13 @@ public final class RangeParser {
       throw new RangeParseException("Range string cannot be empty", rangeString, 0);
     }
 
-    // Handle lenient mode for bracket-less notation
     if (lenient && !trimmed.startsWith("[") && !trimmed.startsWith("(")) {
       trimmed = "[" + trimmed + ")";
     }
 
     // Validate and extract brackets (manual parsing to avoid ReDoS)
     if (trimmed.length() < 5) { // Minimum: "[a..b]"
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     char openingBracket = trimmed.charAt(0);
@@ -136,30 +135,21 @@ public final class RangeParser {
 
     if ((openingBracket != '[' && openingBracket != '(')
         || (closingBracket != ']' && closingBracket != ')')) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     // Find the separator ".." - search from position 1 to avoid matching decimal points
     String content = trimmed.substring(1, trimmed.length() - 1);
     int separatorIndex = content.indexOf(SEPARATOR);
     if (separatorIndex == -1) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     String lowerPart = content.substring(0, separatorIndex).trim();
     String upperPart = content.substring(separatorIndex + SEPARATOR.length()).trim();
 
     if (lowerPart.isEmpty() || upperPart.isEmpty()) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
@@ -201,7 +191,7 @@ public final class RangeParser {
     }
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings("unchecked")
   private <T extends Comparable<?>> Range<T> buildRange(
       String lowerPart,
       String upperPart,
@@ -211,24 +201,20 @@ public final class RangeParser {
       boolean upperUnbounded,
       TypeAdapter<T> adapter) {
 
-    // Case: (-∞..+∞) = all
     if (lowerUnbounded && upperUnbounded) {
       return Range.all();
     }
 
-    // Case: (-∞..b] or (-∞..b)
     if (lowerUnbounded) {
       T upper = parseAndValidate(adapter, upperPart, "upper");
       return upperBoundType == BoundType.CLOSED ? Range.atMost(upper) : Range.lessThan(upper);
     }
 
-    // Case: [a..+∞) or (a..+∞)
     if (upperUnbounded) {
       T lower = parseAndValidate(adapter, lowerPart, "lower");
       return lowerBoundType == BoundType.CLOSED ? Range.atLeast(lower) : Range.greaterThan(lower);
     }
 
-    // Case: bounded range
     T lower = parseAndValidate(adapter, lowerPart, "lower");
     T upper = parseAndValidate(adapter, upperPart, "upper");
 
@@ -246,15 +232,18 @@ public final class RangeParser {
           0);
     }
 
-    if (lowerBoundType == BoundType.CLOSED && upperBoundType == BoundType.CLOSED) {
-      return Range.closed(lower, upper);
-    } else if (lowerBoundType == BoundType.CLOSED && upperBoundType == BoundType.OPEN) {
-      return Range.closedOpen(lower, upper);
-    } else if (lowerBoundType == BoundType.OPEN && upperBoundType == BoundType.CLOSED) {
-      return Range.openClosed(lower, upper);
-    } else {
-      return Range.open(lower, upper);
-    }
+    return switch (lowerBoundType) {
+      case CLOSED ->
+          switch (upperBoundType) {
+            case CLOSED -> Range.closed(lower, upper);
+            case OPEN -> Range.closedOpen(lower, upper);
+          };
+      case OPEN ->
+          switch (upperBoundType) {
+            case CLOSED -> Range.openClosed(lower, upper);
+            case OPEN -> Range.open(lower, upper);
+          };
+    };
   }
 
   /** Parses a value using the adapter and validates the result is not null. */
@@ -295,6 +284,8 @@ public final class RangeParser {
      * @return this builder
      */
     public <T extends Comparable<T>> Builder registerType(Class<T> type, TypeAdapter<T> adapter) {
+      requireNonNull(type, "type must not be null");
+      requireNonNull(adapter, "adapter must not be null");
       typeAdapters.put(type, adapter);
       return this;
     }

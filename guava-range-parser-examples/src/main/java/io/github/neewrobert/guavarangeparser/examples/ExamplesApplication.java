@@ -18,8 +18,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  *
  * <p>Run with: {@code mvn spring-boot:run}
  */
-@SpringBootApplication
 @EnableConfigurationProperties(AppProperties.class)
+@SpringBootApplication
 public class ExamplesApplication {
 
   public static void main(String[] args) {

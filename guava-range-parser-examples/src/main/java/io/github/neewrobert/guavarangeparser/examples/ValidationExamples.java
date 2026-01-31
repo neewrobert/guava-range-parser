@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 @Order(4)
 public class ValidationExamples implements CommandLineRunner {
 
-  private static final Logger log = LoggerFactory.getLogger(ValidationExamples.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ValidationExamples.class);
 
   private final Validator validator;
 
@@ -38,7 +38,7 @@ public class ValidationExamples implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    log.info("\n=== Bean Validation Examples ===");
+    LOG.info("\n=== Bean Validation Examples ===");
 
     validRangeExample();
     invalidRangeExamples();
@@ -47,7 +47,7 @@ public class ValidationExamples implements CommandLineRunner {
 
   /** Demonstrates validation of a valid Range. */
   private void validRangeExample() {
-    log.info("\n--- Valid Range Example ---");
+    LOG.info("\n--- Valid Range Example ---");
 
     ProductConfig config = new ProductConfig();
     config.setPriceRange(Range.closed(10.0, 100.0));
@@ -57,18 +57,18 @@ public class ValidationExamples implements CommandLineRunner {
     Set<ConstraintViolation<ProductConfig>> violations = validator.validate(config);
 
     if (violations.isEmpty()) {
-      log.info("ProductConfig is valid: {}", config);
+      LOG.info("ProductConfig is valid: {}", config);
     } else {
-      violations.forEach(v -> log.warn("Violation: {}", v.getMessage()));
+      violations.forEach(v -> LOG.warn("Violation: {}", v.getMessage()));
     }
   }
 
   /** Demonstrates various validation failures. */
   private void invalidRangeExamples() {
-    log.info("\n--- Invalid Range Examples ---");
+    LOG.info("\n--- Invalid Range Examples ---");
 
     // Empty range violation
-    log.info("Testing empty range [5..5):");
+    LOG.info("Testing empty range [5..5):");
     ProductConfig emptyRange = new ProductConfig();
     emptyRange.setPriceRange(Range.closedOpen(5.0, 5.0)); // Empty!
     emptyRange.setQuantityRange(Range.closed(1, 100));
@@ -76,7 +76,7 @@ public class ValidationExamples implements CommandLineRunner {
     validateAndLog(emptyRange);
 
     // Missing lower bound violation
-    log.info("\nTesting unbounded range (-∞..100]:");
+    LOG.info("\nTesting unbounded range (-∞..100]:");
     ProductConfig unboundedLower = new ProductConfig();
     unboundedLower.setPriceRange(Range.closed(10.0, 100.0));
     unboundedLower.setQuantityRange(Range.atMost(100)); // No lower bound!
@@ -84,7 +84,7 @@ public class ValidationExamples implements CommandLineRunner {
     validateAndLog(unboundedLower);
 
     // Missing upper bound violation
-    log.info("\nTesting unbounded range [0..+∞):");
+    LOG.info("\nTesting unbounded range [0..+∞):");
     ProductConfig unboundedUpper = new ProductConfig();
     unboundedUpper.setPriceRange(Range.closed(10.0, 100.0));
     unboundedUpper.setQuantityRange(Range.closed(1, 100));
@@ -94,10 +94,10 @@ public class ValidationExamples implements CommandLineRunner {
 
   /** Demonstrates combining @ValidRange with other constraints. */
   private void combinedValidationExample() {
-    log.info("\n--- Combined Validation Example ---");
+    LOG.info("\n--- Combined Validation Example ---");
 
     // Null violation (from @NotNull)
-    log.info("Testing null range:");
+    LOG.info("Testing null range:");
     ProductConfig nullRange = new ProductConfig();
     nullRange.setPriceRange(null); // Null!
     nullRange.setQuantityRange(Range.closed(1, 100));
@@ -108,10 +108,10 @@ public class ValidationExamples implements CommandLineRunner {
   private void validateAndLog(ProductConfig config) {
     Set<ConstraintViolation<ProductConfig>> violations = validator.validate(config);
     if (violations.isEmpty()) {
-      log.info("  Valid: {}", config);
+      LOG.info("  Valid: {}", config);
     } else {
       violations.forEach(
-          v -> log.info("  Violation on '{}': {}", v.getPropertyPath(), v.getMessage()));
+          v -> LOG.info("  Violation on '{}': {}", v.getPropertyPath(), v.getMessage()));
     }
   }
 
@@ -128,24 +128,12 @@ public class ValidationExamples implements CommandLineRunner {
     @ValidRange(requireUpperBound = true)
     private Range<Double> discountRange;
 
-    public Range<Double> getPriceRange() {
-      return priceRange;
-    }
-
     public void setPriceRange(Range<Double> priceRange) {
       this.priceRange = priceRange;
     }
 
-    public Range<Integer> getQuantityRange() {
-      return quantityRange;
-    }
-
     public void setQuantityRange(Range<Integer> quantityRange) {
       this.quantityRange = quantityRange;
-    }
-
-    public Range<Double> getDiscountRange() {
-      return discountRange;
     }
 
     public void setDiscountRange(Range<Double> discountRange) {
