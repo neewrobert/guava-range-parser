@@ -2,7 +2,7 @@
 # ==============================
 # Common commands for building, testing, and running the project
 
-.PHONY: help build clean test coverage examples run-examples install \
+.PHONY: help build clean test coverage run-examples install \
         format format-check security pitest errorprone sortpom sortpom-check
 
 # Default target
@@ -20,7 +20,6 @@ help:
 	@echo "    make pitest         - Run mutation testing with Pitest"
 	@echo ""
 	@echo "  Examples:"
-	@echo "    make examples       - Build including examples module"
 	@echo "    make run-examples   - Run the examples Spring Boot application"
 	@echo ""
 	@echo "  Code Quality:"
@@ -71,10 +70,7 @@ pitest:
 # Examples
 # =============================================================================
 
-examples:
-	mvn install -Pexamples -q
-
-run-examples: examples
+run-examples:
 	cd guava-range-parser-examples && mvn spring-boot:run
 
 # =============================================================================
