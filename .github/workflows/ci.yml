@@ -106,8 +106,17 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
     steps:
+      - name: Check NVD API Key
+        run: |
+          if [ -z "$NVD_API_KEY" ]; then
+            echo "::error::NVD_API_KEY secret is not set. Skipping security scan."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -120,8 +129,6 @@ jobs:
 
       - name: Run OWASP Dependency-Check
         run: mvn verify -Pdev,security -DskipTests
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
       - name: Upload security reports
         uses: actions/upload-artifact@v6
