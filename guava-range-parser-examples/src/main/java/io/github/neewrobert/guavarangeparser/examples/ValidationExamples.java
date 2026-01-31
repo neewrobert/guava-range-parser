@@ -128,24 +128,12 @@ public class ValidationExamples implements CommandLineRunner {
     @ValidRange(requireUpperBound = true)
     private Range<Double> discountRange;
 
-    public Range<Double> getPriceRange() {
-      return priceRange;
-    }
-
     public void setPriceRange(Range<Double> priceRange) {
       this.priceRange = priceRange;
     }
 
-    public Range<Integer> getQuantityRange() {
-      return quantityRange;
-    }
-
     public void setQuantityRange(Range<Integer> quantityRange) {
       this.quantityRange = quantityRange;
-    }
-
-    public Range<Double> getDiscountRange() {
-      return discountRange;
     }
 
     public void setDiscountRange(Range<Double> discountRange) {

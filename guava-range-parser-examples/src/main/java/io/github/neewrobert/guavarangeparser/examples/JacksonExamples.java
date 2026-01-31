@@ -69,15 +69,13 @@ public class JacksonExamples implements CommandLineRunner {
     ObjectMapper mapper = new ObjectMapper().registerModule(new GuavaRangeParserModule());
 
     // Deserialize with explicit type
-    Range<Integer> closed =
-        mapper.readValue("\"[0..100]\"", new TypeReference<Range<Integer>>() {});
+    Range<Integer> closed = mapper.readValue("\"[0..100]\"", new TypeReference<>() {});
     LOG.info("\"[0..100]\" -> {}", closed);
 
-    Range<Double> doubleRange =
-        mapper.readValue("\"[0.0..1.0)\"", new TypeReference<Range<Double>>() {});
+    Range<Double> doubleRange = mapper.readValue("\"[0.0..1.0)\"", new TypeReference<>() {});
     LOG.info("\"[0.0..1.0)\" -> {}", doubleRange);
 
-    Range<Long> unbounded = mapper.readValue("\"(-∞..+∞)\"", new TypeReference<Range<Long>>() {});
+    Range<Long> unbounded = mapper.readValue("\"(-∞..+∞)\"", new TypeReference<>() {});
     LOG.info("\"(-∞..+∞)\" -> {}", unbounded);
   }
 
@@ -95,8 +93,7 @@ public class JacksonExamples implements CommandLineRunner {
     LOG.info("List of ranges -> {}", json);
 
     // Deserialize back
-    List<Range<Integer>> parsed =
-        mapper.readValue(json, new TypeReference<List<Range<Integer>>>() {});
+    List<Range<Integer>> parsed = mapper.readValue(json, new TypeReference<>() {});
     LOG.info("Parsed back -> {}", parsed);
   }
 
