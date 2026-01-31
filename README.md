@@ -1,6 +1,6 @@
 # Guava Range Parser
 
-A Java library for parsing and formatting Guava Range objects from string notation and JSON format.
+A Java library for parsing and formatting Guava Range objects from string notation (e.g., `[0..100)`).
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Java](https://img.shields.io/badge/Java-17%2B-orange.svg)](https://openjdk.org/)
@@ -11,7 +11,7 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
 
 - **String notation parsing**: Parse `[0..100)`, `(-∞..+∞)`, etc. into Range objects
 - **Formatting**: Convert Range objects back to string notation
-- **Jackson integration**: Seamless JSON serialization/deserialization
+- **Jackson integration**: Serialize/deserialize Range as string notation in JSON
 - **Spring Boot integration**: Auto-configured converters for configuration properties
 
 ## Installation
@@ -92,20 +92,26 @@ String unbounded = RangeFormatter.toString(Range.atLeast(100));
 
 ### Jackson Integration
 
+Serialize and deserialize Range objects as **string notation** in JSON:
+
 ```java
 import io.github.neewrobert.guavarangeparser.jackson.GuavaRangeParserModule;
 
 ObjectMapper mapper = new ObjectMapper()
     .registerModule(new GuavaRangeParserModule());
 
-// Deserialize
+// Deserialize from string notation
 Range<Integer> range = mapper.readValue("\"[0..100)\"",
     new TypeReference<Range<Integer>>() {});
 
-// Serialize
+// Serialize to string notation
 String json = mapper.writeValueAsString(Range.closedOpen(0, 100));
 // Returns: "[0..100)"
 ```
+
+> **Note:** This module uses compact string notation (`"[0..100)"`). For JSON object format
+> (`{"lowerEndpoint":0,"upperEndpoint":100,...}`), use Jackson's
+> [jackson-datatype-guava](https://github.com/FasterXML/jackson-datatypes-collections) module instead.
 
 ### Spring Boot Integration
 
@@ -172,6 +178,14 @@ RangeFormatter formatter = RangeFormatter.builder()
     .infinityStyle(InfinityStyle.WORD_LOWER) // +inf, -inf
     .infinityStyle(InfinityStyle.WORD_UPPER) // +INF, -INF
     .infinityStyle(InfinityStyle.WORD_FULL)  // +Infinity, -Infinity
+    .build();
+```
+
+The Jackson module also supports configuring infinity style:
+
+```java
+GuavaRangeParserModule module = GuavaRangeParserModule.builder()
+    .infinityStyle(InfinityStyle.WORD_LOWER)  // Use +inf/-inf in JSON
     .build();
 ```
 

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.google.common.collect.Range;
 import io.github.neewrobert.guavarangeparser.core.InfinityStyle;
 import java.time.Duration;
@@ -20,22 +21,9 @@ class GuavaRangeParserModuleTest {
   class ModuleConfiguration {
 
     @Test
-    void defaultModuleHasStringNotationOutput() {
-      GuavaRangeParserModule module = new GuavaRangeParserModule();
-      assertThat(module.getOutputFormat()).isEqualTo(OutputFormat.STRING_NOTATION);
-    }
-
-    @Test
     void defaultModuleHasSymbolInfinityStyle() {
       GuavaRangeParserModule module = new GuavaRangeParserModule();
       assertThat(module.getInfinityStyle()).isEqualTo(InfinityStyle.SYMBOL);
-    }
-
-    @Test
-    void builderConfiguresOutputFormat() {
-      GuavaRangeParserModule module =
-          GuavaRangeParserModule.builder().outputFormat(OutputFormat.JSON_OBJECT).build();
-      assertThat(module.getOutputFormat()).isEqualTo(OutputFormat.JSON_OBJECT);
     }
 
     @Test
@@ -139,103 +127,6 @@ class GuavaRangeParserModuleTest {
       Range<String> range = Range.closed("a", "z");
       String json = mapper.writeValueAsString(range);
       assertThat(json).isEqualTo("\"[a..z]\"");
-    }
-  }
-
-  @Nested
-  class JsonObjectSerialization {
-
-    private final ObjectMapper mapper =
-        new ObjectMapper()
-            .registerModule(
-                GuavaRangeParserModule.builder().outputFormat(OutputFormat.JSON_OBJECT).build());
-
-    @Test
-    void serializeClosedRange() throws JsonProcessingException {
-      Range<Integer> range = Range.closed(0, 100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerEndpoint\":0");
-      assertThat(json).contains("\"upperEndpoint\":100");
-      assertThat(json).contains("\"lowerBoundType\":\"CLOSED\"");
-      assertThat(json).contains("\"upperBoundType\":\"CLOSED\"");
-    }
-
-    @Test
-    void serializeAtLeastRange() throws JsonProcessingException {
-      Range<Integer> range = Range.atLeast(0);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerEndpoint\":0");
-      assertThat(json).contains("\"lowerBoundType\":\"CLOSED\"");
-      assertThat(json).doesNotContain("upperEndpoint");
-      assertThat(json).doesNotContain("upperBoundType");
-    }
-
-    @Test
-    void serializeAtMostRange() throws JsonProcessingException {
-      Range<Integer> range = Range.atMost(100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).doesNotContain("lowerEndpoint");
-      assertThat(json).doesNotContain("lowerBoundType");
-      assertThat(json).contains("\"upperEndpoint\":100");
-      assertThat(json).contains("\"upperBoundType\":\"CLOSED\"");
-    }
-
-    @Test
-    void serializeAllRange() throws JsonProcessingException {
-      Range<Integer> range = Range.all();
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).isEqualTo("{}");
-    }
-
-    @Test
-    void serializeOpenRange() throws JsonProcessingException {
-      Range<Integer> range = Range.open(0, 100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerBoundType\":\"OPEN\"");
-      assertThat(json).contains("\"upperBoundType\":\"OPEN\"");
-    }
-
-    @Test
-    void serializeOpenClosedRange() throws JsonProcessingException {
-      Range<Integer> range = Range.openClosed(0, 100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerBoundType\":\"OPEN\"");
-      assertThat(json).contains("\"upperBoundType\":\"CLOSED\"");
-    }
-
-    @Test
-    void serializeClosedOpenRange() throws JsonProcessingException {
-      Range<Integer> range = Range.closedOpen(0, 100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerBoundType\":\"CLOSED\"");
-      assertThat(json).contains("\"upperBoundType\":\"OPEN\"");
-    }
-
-    @Test
-    void serializeGreaterThanRange() throws JsonProcessingException {
-      Range<Integer> range = Range.greaterThan(0);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"lowerBoundType\":\"OPEN\"");
-      assertThat(json).doesNotContain("upperEndpoint");
-    }
-
-    @Test
-    void serializeLessThanRange() throws JsonProcessingException {
-      Range<Integer> range = Range.lessThan(100);
-      String json = mapper.writeValueAsString(range);
-      assertThat(json).contains("\"upperBoundType\":\"OPEN\"");
-      assertThat(json).doesNotContain("lowerEndpoint");
-    }
-
-    @Test
-    void jsonObjectIsValidJson() throws JsonProcessingException {
-      Range<Integer> range = Range.closed(0, 100);
-      String json = mapper.writeValueAsString(range);
-      // Verify it starts and ends with braces (writeStartObject/writeEndObject)
-      assertThat(json).startsWith("{");
-      assertThat(json).endsWith("}");
-      // Verify it can be parsed back
-      mapper.readTree(json);
     }
   }
 
@@ -412,148 +303,6 @@ class GuavaRangeParserModuleTest {
   }
 
   @Nested
-  class JsonObjectDeserialization {
-
-    private final ObjectMapper mapper =
-        new ObjectMapper().registerModule(new GuavaRangeParserModule());
-
-    @Test
-    void deserializeClosedRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "upperEndpoint": 100,
-            "lowerBoundType": "CLOSED",
-            "upperBoundType": "CLOSED"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.closed(0, 100));
-    }
-
-    @Test
-    void deserializeOpenRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "upperEndpoint": 100,
-            "lowerBoundType": "OPEN",
-            "upperBoundType": "OPEN"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.open(0, 100));
-    }
-
-    @Test
-    void deserializeAtLeastRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "lowerBoundType": "CLOSED"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.atLeast(0));
-    }
-
-    @Test
-    void deserializeAtMostRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "upperEndpoint": 100,
-            "upperBoundType": "CLOSED"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.atMost(100));
-    }
-
-    @Test
-    void deserializeAllRange() throws JsonProcessingException {
-      String json = "{}";
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.all());
-    }
-
-    @Test
-    void deserializeIgnoresUnknownFields() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "upperEndpoint": 100,
-            "lowerBoundType": "CLOSED",
-            "upperBoundType": "OPEN",
-            "unknownField": "ignored"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.closedOpen(0, 100));
-    }
-
-    @Test
-    void deserializeOpenClosedRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "upperEndpoint": 100,
-            "lowerBoundType": "OPEN",
-            "upperBoundType": "CLOSED"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.openClosed(0, 100));
-    }
-
-    @Test
-    void deserializeClosedOpenRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "upperEndpoint": 100,
-            "lowerBoundType": "CLOSED",
-            "upperBoundType": "OPEN"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.closedOpen(0, 100));
-    }
-
-    @Test
-    void deserializeGreaterThanRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "lowerEndpoint": 0,
-            "lowerBoundType": "OPEN"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.greaterThan(0));
-    }
-
-    @Test
-    void deserializeLessThanRange() throws JsonProcessingException {
-      String json =
-          """
-          {
-            "upperEndpoint": 100,
-            "upperBoundType": "OPEN"
-          }
-          """;
-      Range<Integer> range = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
-      assertThat(range).isEqualTo(Range.lessThan(100));
-    }
-  }
-
-  @Nested
   class RoundTrip {
 
     private final ObjectMapper mapper =
@@ -610,6 +359,22 @@ class GuavaRangeParserModuleTest {
       assertThatThrownBy(
               () -> mapper.readValue("\"[abc..100)\"", new TypeReference<Range<Integer>>() {}))
           .isInstanceOf(InvalidFormatException.class);
+    }
+
+    @Test
+    void throwsOnJsonObjectFormat() {
+      // JSON object format is not supported - use jackson-datatype-guava for that
+      String json =
+          """
+          {
+            "lowerEndpoint": 0,
+            "upperEndpoint": 100,
+            "lowerBoundType": "CLOSED",
+            "upperBoundType": "OPEN"
+          }
+          """;
+      assertThatThrownBy(() -> mapper.readValue(json, new TypeReference<Range<Integer>>() {}))
+          .isInstanceOf(MismatchedInputException.class);
     }
   }
 
