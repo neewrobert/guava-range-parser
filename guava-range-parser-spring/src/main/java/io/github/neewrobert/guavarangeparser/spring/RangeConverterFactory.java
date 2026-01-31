@@ -9,7 +9,6 @@ import io.github.neewrobert.guavarangeparser.core.RangeParser;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
-import org.springframework.lang.Nullable;
 
 /**
  * Spring converter for converting String to Guava {@link Range} objects.
@@ -59,10 +58,8 @@ public class RangeConverterFactory implements GenericConverter {
     return ImmutableSet.of(new ConvertiblePair(String.class, Range.class));
   }
 
-  @Nullable
   @Override
-  public Object convert(
-      @Nullable Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+  public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
     if (source == null) {
       return null;
     }
