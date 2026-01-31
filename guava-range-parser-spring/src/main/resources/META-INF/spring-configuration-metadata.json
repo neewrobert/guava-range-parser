@@ -1,0 +1,34 @@
+{
+  "groups": [
+    {
+      "name": "guava.range-parser",
+      "type": "io.github.neewrobert.guavarangeparser.spring.RangeParserProperties",
+      "sourceType": "io.github.neewrobert.guavarangeparser.spring.RangeParserProperties",
+      "description": "Configuration properties for the Guava Range parser."
+    }
+  ],
+  "properties": [
+    {
+      "name": "guava.range-parser.lenient",
+      "type": "java.lang.Boolean",
+      "description": "Enable lenient parsing mode. When enabled, bracket-less notation like '0..100' is accepted and treated as closed-open ranges (equivalent to '[0..100)'). Default: false (strict mode requiring explicit brackets).",
+      "sourceType": "io.github.neewrobert.guavarangeparser.spring.RangeParserProperties",
+      "defaultValue": false
+    }
+  ],
+  "hints": [
+    {
+      "name": "guava.range-parser.lenient",
+      "values": [
+        {
+          "value": true,
+          "description": "Accept bracket-less notation like '0..100' (treated as '[0..100)')"
+        },
+        {
+          "value": false,
+          "description": "Require explicit brackets like '[0..100)' (recommended)"
+        }
+      ]
+    }
+  ]
+}

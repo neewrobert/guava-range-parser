@@ -1,5 +1,7 @@
 package io.github.neewrobert.guavarangeparser.spring;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * Configuration properties for the Guava Range parser.
  *
@@ -11,6 +13,7 @@ package io.github.neewrobert.guavarangeparser.spring;
  *
  * @see RangeConverterAutoConfiguration
  */
+@ConfigurationProperties(prefix = "guava.range-parser")
 public class RangeParserProperties {
 
   /**
