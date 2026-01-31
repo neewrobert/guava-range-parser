@@ -242,15 +242,16 @@ public final class RangeParser {
           0);
     }
 
-    if (lowerBoundType == BoundType.CLOSED && upperBoundType == BoundType.CLOSED) {
-      return Range.closed(lower, upper);
-    } else if (lowerBoundType == BoundType.CLOSED && upperBoundType == BoundType.OPEN) {
-      return Range.closedOpen(lower, upper);
-    } else if (lowerBoundType == BoundType.OPEN && upperBoundType == BoundType.CLOSED) {
-      return Range.openClosed(lower, upper);
-    } else {
-      return Range.open(lower, upper);
-    }
+    return switch (lowerBoundType) {
+      case CLOSED -> switch (upperBoundType) {
+        case CLOSED -> Range.closed(lower, upper);
+        case OPEN -> Range.closedOpen(lower, upper);
+      };
+      case OPEN -> switch (upperBoundType) {
+        case CLOSED -> Range.openClosed(lower, upper);
+        case OPEN -> Range.open(lower, upper);
+      };
+    };
   }
 
   /** Parses a value using the adapter and validates the result is not null. */
