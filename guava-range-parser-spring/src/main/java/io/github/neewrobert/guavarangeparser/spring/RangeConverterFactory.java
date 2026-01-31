@@ -91,7 +91,7 @@ public class RangeConverterFactory implements GenericConverter {
     ResolvableType resolvableType = targetType.getResolvableType();
     ResolvableType generic = resolvableType.getGeneric(0);
     Class<?> resolved = generic.resolve();
-    // Check if type could not be resolved, or resolved to just Comparable (the type bound)
+    // Check if the type could not be resolved, or resolved to just Comparable (the type bound)
     // which indicates a raw Range type without explicit generic parameter
     if (resolved == null || resolved == Comparable.class) {
       throw new IllegalArgumentException(
