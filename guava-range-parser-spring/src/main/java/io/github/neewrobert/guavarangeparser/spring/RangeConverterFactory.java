@@ -34,7 +34,7 @@ import org.springframework.core.convert.converter.GenericConverter;
  * @see RangeParser
  * @see RangeConverterAutoConfiguration
  */
-public class RangeConverterFactory implements GenericConverter {
+public final class RangeConverterFactory implements GenericConverter {
 
   private final RangeParser parser;
 

@@ -64,9 +64,10 @@ public final class RangeParser {
   private RangeParser(Builder builder) {
     // Register built-in adapters first, then overlay custom adapters
     // This allows custom adapters to override built-in ones
-    this.typeAdapters = new HashMap<>();
-    BuiltInTypeAdapters.registerAll(this.typeAdapters);
-    this.typeAdapters.putAll(builder.typeAdapters);
+    Map<Class<?>, TypeAdapter<?>> adapters = new HashMap<>();
+    BuiltInTypeAdapters.registerAll(adapters);
+    adapters.putAll(builder.typeAdapters);
+    this.typeAdapters = Map.copyOf(adapters);
     this.lenient = builder.lenient;
   }
 

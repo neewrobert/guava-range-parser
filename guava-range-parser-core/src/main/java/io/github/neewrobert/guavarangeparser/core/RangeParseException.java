@@ -8,7 +8,7 @@ package io.github.neewrobert.guavarangeparser.core;
  *
  * @see RangeParser
  */
-public class RangeParseException extends RuntimeException {
+public final class RangeParseException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
