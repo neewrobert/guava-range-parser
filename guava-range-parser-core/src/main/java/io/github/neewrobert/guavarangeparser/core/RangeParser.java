@@ -117,7 +117,7 @@ public final class RangeParser {
     if (rangeString.length() > MAX_INPUT_LENGTH) {
       throw new RangeParseException(
           "Input exceeds maximum length of " + MAX_INPUT_LENGTH + " characters",
-          rangeString.substring(0, Math.min(50, rangeString.length())) + "...",
+          rangeString.substring(0, 50) + "...",
           0);
     }
 
