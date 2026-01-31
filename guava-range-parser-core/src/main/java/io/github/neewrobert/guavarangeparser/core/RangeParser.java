@@ -48,8 +48,7 @@ public final class RangeParser {
       Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
 
   /** Negative infinity representations. */
-  private static final Set<String> NEGATIVE_INFINITY =
-      Set.of("-∞", "-inf", "-INF", "-Infinity");
+  private static final Set<String> NEGATIVE_INFINITY = Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
    * Maximum allowed length for input strings.
