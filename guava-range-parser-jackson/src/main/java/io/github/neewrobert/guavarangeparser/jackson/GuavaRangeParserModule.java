@@ -24,6 +24,9 @@ import io.github.neewrobert.guavarangeparser.core.InfinityStyle;
  * // Returns: "[0..100)"
  * }</pre>
  *
+ * <p>For JSON object format (e.g., {@code {"lowerEndpoint":0,"upperEndpoint":100,...}}), use
+ * Jackson's {@code jackson-datatype-guava} module instead.
+ *
  * @see io.github.neewrobert.guavarangeparser.core.RangeParser
  * @see io.github.neewrobert.guavarangeparser.core.RangeFormatter
  */
@@ -31,16 +34,14 @@ public class GuavaRangeParserModule extends Module {
 
   private static final String MODULE_NAME = "guava-range-parser";
 
-  private final OutputFormat outputFormat;
   private final InfinityStyle infinityStyle;
 
   /** Creates a new module with default settings. */
   public GuavaRangeParserModule() {
-    this(OutputFormat.STRING_NOTATION, InfinityStyle.SYMBOL);
+    this(InfinityStyle.SYMBOL);
   }
 
-  private GuavaRangeParserModule(OutputFormat outputFormat, InfinityStyle infinityStyle) {
-    this.outputFormat = outputFormat;
+  private GuavaRangeParserModule(InfinityStyle infinityStyle) {
     this.infinityStyle = infinityStyle;
   }
 
@@ -65,17 +66,8 @@ public class GuavaRangeParserModule extends Module {
 
   @Override
   public void setupModule(SetupContext context) {
-    context.addSerializers(new RangeSerializers(outputFormat, infinityStyle));
+    context.addSerializers(new RangeSerializers(infinityStyle));
     context.addDeserializers(new RangeDeserializers());
-  }
-
-  /**
-   * Returns the configured output format.
-   *
-   * @return the output format
-   */
-  public OutputFormat getOutputFormat() {
-    return outputFormat;
   }
 
   /**
@@ -89,21 +81,9 @@ public class GuavaRangeParserModule extends Module {
 
   /** Builder for creating configured {@link GuavaRangeParserModule} instances. */
   public static final class Builder {
-    private OutputFormat outputFormat = OutputFormat.STRING_NOTATION;
     private InfinityStyle infinityStyle = InfinityStyle.SYMBOL;
 
     private Builder() {}
-
-    /**
-     * Sets the output format for serialization.
-     *
-     * @param outputFormat the output format
-     * @return this builder
-     */
-    public Builder outputFormat(OutputFormat outputFormat) {
-      this.outputFormat = outputFormat;
-      return this;
-    }
 
     /**
      * Sets the infinity style for output.
@@ -122,7 +102,7 @@ public class GuavaRangeParserModule extends Module {
      * @return a new module instance
      */
     public GuavaRangeParserModule build() {
-      return new GuavaRangeParserModule(outputFormat, infinityStyle);
+      return new GuavaRangeParserModule(infinityStyle);
     }
   }
 }

@@ -22,12 +22,13 @@
  *
  * <pre>{@code
  * GuavaRangeParserModule module = GuavaRangeParserModule.builder()
- *     .outputFormat(OutputFormat.STRING_NOTATION)
  *     .infinityStyle(InfinityStyle.SYMBOL)
  *     .build();
  * }</pre>
  *
+ * <p>For JSON object format (e.g., {@code {"lowerEndpoint":0,"upperEndpoint":100,...}}), use
+ * Jackson's {@code jackson-datatype-guava} module instead.
+ *
  * @see io.github.neewrobert.guavarangeparser.jackson.GuavaRangeParserModule
- * @see io.github.neewrobert.guavarangeparser.jackson.OutputFormat
  */
 package io.github.neewrobert.guavarangeparser.jackson;

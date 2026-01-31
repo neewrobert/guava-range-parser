@@ -8,14 +8,16 @@ import io.github.neewrobert.guavarangeparser.core.InfinityStyle;
 import io.github.neewrobert.guavarangeparser.core.RangeFormatter;
 import java.io.IOException;
 
-/** Jackson serializer for Guava Range objects. */
+/**
+ * Jackson serializer for Guava Range objects.
+ *
+ * <p>Serializes Range objects to string notation (e.g., "[0..100)", "(-∞..+∞)").
+ */
 class RangeSerializer extends JsonSerializer<Range<?>> {
 
-  private final OutputFormat outputFormat;
   private final RangeFormatter formatter;
 
-  RangeSerializer(OutputFormat outputFormat, InfinityStyle infinityStyle) {
-    this.outputFormat = outputFormat;
+  RangeSerializer(InfinityStyle infinityStyle) {
     this.formatter = RangeFormatter.builder().infinityStyle(infinityStyle).build();
   }
 
@@ -23,27 +25,7 @@ class RangeSerializer extends JsonSerializer<Range<?>> {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public void serialize(Range<?> value, JsonGenerator gen, SerializerProvider serializers)
       throws IOException {
-    if (outputFormat == OutputFormat.STRING_NOTATION) {
-      gen.writeString(formatter.format((Range) value));
-    } else {
-      writeAsJsonObject(value, gen);
-    }
-  }
-
-  private void writeAsJsonObject(Range<?> range, JsonGenerator gen) throws IOException {
-    gen.writeStartObject();
-
-    if (range.hasLowerBound()) {
-      gen.writeObjectField("lowerEndpoint", range.lowerEndpoint());
-      gen.writeStringField("lowerBoundType", range.lowerBoundType().name());
-    }
-
-    if (range.hasUpperBound()) {
-      gen.writeObjectField("upperEndpoint", range.upperEndpoint());
-      gen.writeStringField("upperBoundType", range.upperBoundType().name());
-    }
-
-    gen.writeEndObject();
+    gen.writeString(formatter.format((Range) value));
   }
 
   @Override

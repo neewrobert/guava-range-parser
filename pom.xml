@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <name>Guava Range Parser</name>
-    <description>A library for parsing and formatting Guava Range objects from string notation and JSON format</description>
+    <description>A library for parsing and formatting Guava Range objects from string notation</description>
     <url>https://github.com/neewrobert/guava-range-parser</url>
     <inceptionYear>2025</inceptionYear>
 
