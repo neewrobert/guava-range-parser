@@ -197,7 +197,7 @@ public final class RangeParser {
     }
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
+  @SuppressWarnings({"unchecked"})
   private <T extends Comparable<?>> Range<T> buildRange(
       String lowerPart,
       String upperPart,

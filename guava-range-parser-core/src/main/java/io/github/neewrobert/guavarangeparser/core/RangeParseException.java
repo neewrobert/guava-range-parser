@@ -1,5 +1,7 @@
 package io.github.neewrobert.guavarangeparser.core;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when a range string cannot be parsed.
  *
@@ -10,6 +12,7 @@ package io.github.neewrobert.guavarangeparser.core;
  */
 public final class RangeParseException extends RuntimeException {
 
+  @Serial
   private static final long serialVersionUID = 1L;
 
   private final String input;
