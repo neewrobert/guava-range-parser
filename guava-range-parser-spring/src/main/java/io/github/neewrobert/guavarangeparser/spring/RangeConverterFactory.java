@@ -6,10 +6,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import io.github.neewrobert.guavarangeparser.core.RangeParseException;
 import io.github.neewrobert.guavarangeparser.core.RangeParser;
-import org.springframework.lang.Nullable;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.converter.GenericConverter;
+import org.springframework.lang.Nullable;
 
 /**
  * Spring converter for converting String to Guava {@link Range} objects.
