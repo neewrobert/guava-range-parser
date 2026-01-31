@@ -71,3 +71,6 @@ Thumbs.db
 *.swp
 *~
 .flattened-pom.xml
+
+# jqwik property-based testing
+.jqwik-database

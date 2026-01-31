@@ -23,21 +23,21 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
 <dependency>
     <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-core</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 </dependency>
 
 <!-- Jackson module (optional) -->
 <dependency>
     <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-jackson</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 </dependency>
 
 <!-- Spring Boot module (optional) -->
 <dependency>
     <groupId>io.github.neewrobert</groupId>
     <artifactId>guava-range-parser-spring</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -49,7 +49,7 @@ Guava's `Range` class is powerful but lacks a built-in way to parse string notat
         <dependency>
             <groupId>io.github.neewrobert</groupId>
             <artifactId>guava-range-parser-bom</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <version>0.2.0</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
