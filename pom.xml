@@ -32,6 +32,7 @@
         <module>guava-range-parser-core</module>
         <module>guava-range-parser-jackson</module>
         <module>guava-range-parser-spring</module>
+        <module>guava-range-parser-examples</module>
     </modules>
 
     <scm>
