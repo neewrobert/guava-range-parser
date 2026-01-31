@@ -38,7 +38,6 @@ public class GuavaRangeParserModule extends Module {
 
   private final InfinityStyle infinityStyle;
 
-  /** Creates a new module with default settings. */
   public GuavaRangeParserModule() {
     this(InfinityStyle.SYMBOL);
   }

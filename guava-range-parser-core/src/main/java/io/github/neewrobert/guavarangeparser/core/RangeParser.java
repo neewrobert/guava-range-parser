@@ -40,14 +40,11 @@ import java.util.Set;
  */
 public final class RangeParser {
 
-  /** Range separator. */
   private static final String SEPARATOR = "..";
 
-  /** Positive infinity representations. */
   private static final Set<String> POSITIVE_INFINITY =
       Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
 
-  /** Negative infinity representations. */
   private static final Set<String> NEGATIVE_INFINITY = Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
@@ -58,11 +55,9 @@ public final class RangeParser {
    */
   private static final int MAX_INPUT_LENGTH = 1000;
 
-  /** Error message for invalid range format. */
   private static final String INVALID_FORMAT_MESSAGE =
       "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.";
 
-  /** Cached default instance for static convenience methods. */
   private static final RangeParser DEFAULT_INSTANCE = builder().build();
 
   private final Map<Class<?>, TypeAdapter<?>> typeAdapters;
@@ -126,7 +121,6 @@ public final class RangeParser {
       throw new RangeParseException("Range string cannot be empty", rangeString, 0);
     }
 
-    // Handle lenient mode for bracket-less notation
     if (lenient && !trimmed.startsWith("[") && !trimmed.startsWith("(")) {
       trimmed = "[" + trimmed + ")";
     }
@@ -207,24 +201,20 @@ public final class RangeParser {
       boolean upperUnbounded,
       TypeAdapter<T> adapter) {
 
-    // Case: (-∞..+∞) = all
     if (lowerUnbounded && upperUnbounded) {
       return Range.all();
     }
 
-    // Case: (-∞..b] or (-∞..b)
     if (lowerUnbounded) {
       T upper = parseAndValidate(adapter, upperPart, "upper");
       return upperBoundType == BoundType.CLOSED ? Range.atMost(upper) : Range.lessThan(upper);
     }
 
-    // Case: [a..+∞) or (a..+∞)
     if (upperUnbounded) {
       T lower = parseAndValidate(adapter, lowerPart, "lower");
       return lowerBoundType == BoundType.CLOSED ? Range.atLeast(lower) : Range.greaterThan(lower);
     }
 
-    // Case: bounded range
     T lower = parseAndValidate(adapter, lowerPart, "lower");
     T upper = parseAndValidate(adapter, upperPart, "upper");
 

@@ -28,11 +28,8 @@ import java.util.Map;
  */
 public final class BuiltInTypeAdapters {
 
-  private BuiltInTypeAdapters() {
-    // Utility class
-  }
+  private BuiltInTypeAdapters() {}
 
-  // Numeric adapters
   public static final TypeAdapter<Integer> INTEGER = Integer::valueOf;
   public static final TypeAdapter<Long> LONG = Long::valueOf;
   public static final TypeAdapter<Short> SHORT = Short::valueOf;
@@ -42,7 +39,6 @@ public final class BuiltInTypeAdapters {
   public static final TypeAdapter<BigInteger> BIG_INTEGER = BigInteger::new;
   public static final TypeAdapter<BigDecimal> BIG_DECIMAL = BigDecimal::new;
 
-  // Temporal adapters
   public static final TypeAdapter<Duration> DURATION = Duration::parse;
   public static final TypeAdapter<Instant> INSTANT = Instant::parse;
   public static final TypeAdapter<LocalDate> LOCAL_DATE = LocalDate::parse;
@@ -51,7 +47,6 @@ public final class BuiltInTypeAdapters {
   public static final TypeAdapter<ZonedDateTime> ZONED_DATE_TIME = ZonedDateTime::parse;
   public static final TypeAdapter<OffsetDateTime> OFFSET_DATE_TIME = OffsetDateTime::parse;
 
-  // Other adapters
   public static final TypeAdapter<String> STRING = s -> s;
   public static final TypeAdapter<Character> CHARACTER =
       s -> {
@@ -67,7 +62,6 @@ public final class BuiltInTypeAdapters {
    * @param adapters the map to register adapters into
    */
   static void registerAll(Map<Class<?>, TypeAdapter<?>> adapters) {
-    // Numeric types (including primitives)
     adapters.put(Integer.class, INTEGER);
     adapters.put(int.class, INTEGER);
     adapters.put(Long.class, LONG);
@@ -83,7 +77,6 @@ public final class BuiltInTypeAdapters {
     adapters.put(BigInteger.class, BIG_INTEGER);
     adapters.put(BigDecimal.class, BIG_DECIMAL);
 
-    // Temporal types
     adapters.put(Duration.class, DURATION);
     adapters.put(Instant.class, INSTANT);
     adapters.put(LocalDate.class, LOCAL_DATE);
@@ -92,7 +85,6 @@ public final class BuiltInTypeAdapters {
     adapters.put(ZonedDateTime.class, ZONED_DATE_TIME);
     adapters.put(OffsetDateTime.class, OFFSET_DATE_TIME);
 
-    // Other types
     adapters.put(String.class, STRING);
     adapters.put(Character.class, CHARACTER);
     adapters.put(char.class, CHARACTER);

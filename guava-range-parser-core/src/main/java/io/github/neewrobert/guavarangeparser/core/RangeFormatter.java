@@ -34,7 +34,6 @@ import com.google.common.collect.Range;
  */
 public final class RangeFormatter {
 
-  /** Cached default instance for static convenience methods. */
   private static final RangeFormatter DEFAULT_INSTANCE = builder().build();
 
   private final InfinityStyle infinityStyle;
@@ -75,7 +74,6 @@ public final class RangeFormatter {
 
     StringBuilder sb = new StringBuilder();
 
-    // Opening bracket
     if (range.hasLowerBound()) {
       sb.append(range.lowerBoundType() == BoundType.CLOSED ? "[" : "(");
       sb.append(range.lowerEndpoint());
@@ -86,7 +84,6 @@ public final class RangeFormatter {
 
     sb.append("..");
 
-    // Closing bracket
     if (range.hasUpperBound()) {
       sb.append(range.upperEndpoint());
       sb.append(range.upperBoundType() == BoundType.CLOSED ? "]" : ")");
