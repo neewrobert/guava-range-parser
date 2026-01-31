@@ -191,7 +191,7 @@ public final class RangeParser {
     }
   }
 
-  @SuppressWarnings({"unchecked"})
+  @SuppressWarnings("unchecked")
   private <T extends Comparable<?>> Range<T> buildRange(
       String lowerPart,
       String upperPart,
@@ -233,14 +233,16 @@ public final class RangeParser {
     }
 
     return switch (lowerBoundType) {
-      case CLOSED -> switch (upperBoundType) {
-        case CLOSED -> Range.closed(lower, upper);
-        case OPEN -> Range.closedOpen(lower, upper);
-      };
-      case OPEN -> switch (upperBoundType) {
-        case CLOSED -> Range.openClosed(lower, upper);
-        case OPEN -> Range.open(lower, upper);
-      };
+      case CLOSED ->
+          switch (upperBoundType) {
+            case CLOSED -> Range.closed(lower, upper);
+            case OPEN -> Range.closedOpen(lower, upper);
+          };
+      case OPEN ->
+          switch (upperBoundType) {
+            case CLOSED -> Range.openClosed(lower, upper);
+            case OPEN -> Range.open(lower, upper);
+          };
     };
   }
 

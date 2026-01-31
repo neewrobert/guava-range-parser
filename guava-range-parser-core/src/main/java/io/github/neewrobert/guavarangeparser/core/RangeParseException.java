@@ -12,8 +12,7 @@ import java.io.Serial;
  */
 public final class RangeParseException extends RuntimeException {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   private final String input;
   private final int position;

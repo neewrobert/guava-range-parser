@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 @Order(3)
 public class SpringExamples implements CommandLineRunner {
 
-  private static final Logger log = LoggerFactory.getLogger(SpringExamples.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SpringExamples.class);
 
   private final AppProperties appProperties;
 
@@ -37,7 +37,7 @@ public class SpringExamples implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    log.info("\n=== Spring Module Examples ===");
+    LOG.info("\n=== Spring Module Examples ===");
 
     configurationPropertiesExample();
     valueAnnotationExample();
@@ -46,43 +46,43 @@ public class SpringExamples implements CommandLineRunner {
 
   /** Demonstrates @ConfigurationProperties binding. */
   private void configurationPropertiesExample() {
-    log.info("\n--- @ConfigurationProperties Binding ---");
+    LOG.info("\n--- @ConfigurationProperties Binding ---");
 
-    log.info("app.stock-range: {}", appProperties.getStockRange());
-    log.info("app.price-range: {}", appProperties.getPriceRange());
-    log.info("app.timeout-range: {}", appProperties.getTimeoutRange());
-    log.info("app.unbounded-range: {}", appProperties.getUnboundedRange());
+    LOG.info("app.stock-range: {}", appProperties.getStockRange());
+    LOG.info("app.price-range: {}", appProperties.getPriceRange());
+    LOG.info("app.timeout-range: {}", appProperties.getTimeoutRange());
+    LOG.info("app.unbounded-range: {}", appProperties.getUnboundedRange());
   }
 
   /** Demonstrates @Value annotation injection. */
   private void valueAnnotationExample() {
-    log.info("\n--- @Value Annotation Injection ---");
+    LOG.info("\n--- @Value Annotation Injection ---");
 
-    log.info("@Value(\"${{app.value-range}}\") -> {}", valueRange);
-    log.info("Contains 50? {}", valueRange.contains(50));
-    log.info("Contains 150? {}", valueRange.contains(150));
+    LOG.info("@Value(\"${{app.value-range}}\") -> {}", valueRange);
+    LOG.info("Contains 50? {}", valueRange.contains(50));
+    LOG.info("Contains 150? {}", valueRange.contains(150));
   }
 
   /** Demonstrates using Range for business logic. */
   private void rangeOperationsExample() {
-    log.info("\n--- Range Operations for Business Logic ---");
+    LOG.info("\n--- Range Operations for Business Logic ---");
 
     Range<Integer> stockRange = appProperties.getStockRange();
 
     // Check if a quantity is valid
     int requestedQuantity = 500;
     boolean isValid = stockRange.contains(requestedQuantity);
-    log.info("Is quantity {} valid? {} (stock range: {})", requestedQuantity, isValid, stockRange);
+    LOG.info("Is quantity {} valid? {} (stock range: {})", requestedQuantity, isValid, stockRange);
 
     // Check if ranges overlap
     Range<Integer> promotionRange = Range.closed(100, 200);
     boolean overlaps = !stockRange.intersection(promotionRange).isEmpty();
-    log.info("Does {} overlap with {}? {}", stockRange, promotionRange, overlaps);
+    LOG.info("Does {} overlap with {}? {}", stockRange, promotionRange, overlaps);
 
     // Get the intersection
     if (overlaps) {
       Range<Integer> intersection = stockRange.intersection(promotionRange);
-      log.info("Intersection: {}", intersection);
+      LOG.info("Intersection: {}", intersection);
     }
   }
 }
