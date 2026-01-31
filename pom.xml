@@ -273,6 +273,11 @@
                         <failBuildOnCVSS>7</failBuildOnCVSS>
                         <!-- Disable OSS Index analyzer (requires separate API key) -->
                         <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                        <!-- NVD API settings -->
+                        <nvdMaxRetryCount>3</nvdMaxRetryCount>
+                        <nvdApiDelay>5000</nvdApiDelay>
+                        <!-- Don't fail if NVD is temporarily unavailable -->
+                        <failOnError>false</failOnError>
                         <formats>
                             <format>HTML</format>
                             <format>JSON</format>
