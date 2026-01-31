@@ -119,7 +119,7 @@ jobs:
           cache: 'maven'
 
       - name: Run OWASP Dependency-Check
-        run: mvn verify -Psecurity -DskipTests
+        run: mvn verify -Pdev,security -DskipTests
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
