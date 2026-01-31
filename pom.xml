@@ -270,8 +270,9 @@
                     <artifactId>dependency-check-maven</artifactId>
                     <version>${dependency-check-maven.version}</version>
                     <configuration>
-                        <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                         <failBuildOnCVSS>7</failBuildOnCVSS>
+                        <!-- Disable OSS Index analyzer (requires separate API key) -->
+                        <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                         <formats>
                             <format>HTML</format>
                             <format>JSON</format>
