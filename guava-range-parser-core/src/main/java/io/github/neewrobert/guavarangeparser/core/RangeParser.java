@@ -58,6 +58,10 @@ public final class RangeParser {
    */
   private static final int MAX_INPUT_LENGTH = 1000;
 
+  /** Error message for invalid range format. */
+  private static final String INVALID_FORMAT_MESSAGE =
+      "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.";
+
   /** Cached default instance for static convenience methods. */
   private static final RangeParser DEFAULT_INSTANCE = builder().build();
 
@@ -129,10 +133,7 @@ public final class RangeParser {
 
     // Validate and extract brackets (manual parsing to avoid ReDoS)
     if (trimmed.length() < 5) { // Minimum: "[a..b]"
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     char openingBracket = trimmed.charAt(0);
@@ -140,30 +141,21 @@ public final class RangeParser {
 
     if ((openingBracket != '[' && openingBracket != '(')
         || (closingBracket != ']' && closingBracket != ')')) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     // Find the separator ".." - search from position 1 to avoid matching decimal points
     String content = trimmed.substring(1, trimmed.length() - 1);
     int separatorIndex = content.indexOf(SEPARATOR);
     if (separatorIndex == -1) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     String lowerPart = content.substring(0, separatorIndex).trim();
     String upperPart = content.substring(separatorIndex + SEPARATOR.length()).trim();
 
     if (lowerPart.isEmpty() || upperPart.isEmpty()) {
-      throw new RangeParseException(
-          "Invalid range format. Expected notation like '[a..b)', '(a..b]', '(-∞..+∞)', etc.",
-          rangeString,
-          0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
     }
 
     BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
