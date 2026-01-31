@@ -291,6 +291,8 @@ public final class RangeParser {
      * @return this builder
      */
     public <T extends Comparable<T>> Builder registerType(Class<T> type, TypeAdapter<T> adapter) {
+      requireNonNull(type, "type must not be null");
+      requireNonNull(adapter, "adapter must not be null");
       typeAdapters.put(type, adapter);
       return this;
     }
