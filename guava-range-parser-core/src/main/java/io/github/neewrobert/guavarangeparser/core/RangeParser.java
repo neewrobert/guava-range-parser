@@ -58,6 +58,9 @@ public final class RangeParser {
    */
   private static final int MAX_INPUT_LENGTH = 1000;
 
+  /** Cached default instance for static convenience methods. */
+  private static final RangeParser DEFAULT_INSTANCE = builder().build();
+
   private final Map<Class<?>, TypeAdapter<?>> typeAdapters;
   private final boolean lenient;
 
@@ -90,7 +93,7 @@ public final class RangeParser {
    * @throws RangeParseException if the string cannot be parsed
    */
   public static <T extends Comparable<?>> Range<T> parse(String rangeString, Class<T> elementType) {
-    return builder().build().parseRange(rangeString, elementType);
+    return DEFAULT_INSTANCE.parseRange(rangeString, elementType);
   }
 
   /**
