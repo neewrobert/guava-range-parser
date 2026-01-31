@@ -116,6 +116,7 @@ jobs:
             echo "::error::NVD_API_KEY secret is not set. Skipping security scan."
             exit 1
           fi
+          echo "NVD API Key length: ${#NVD_API_KEY} characters"
 
       - name: Checkout code
         uses: actions/checkout@v6
@@ -128,7 +129,7 @@ jobs:
           cache: 'maven'
 
       - name: Run OWASP Dependency-Check
-        run: mvn verify -Pdev,security -DskipTests -DnvdApiKey=$NVD_API_KEY
+        run: mvn verify -Pdev,security -DskipTests "-DnvdApiKey=$NVD_API_KEY"
 
       - name: Upload security reports
         uses: actions/upload-artifact@v6
