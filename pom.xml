@@ -30,9 +30,9 @@
     <modules>
         <module>guava-range-parser-bom</module>
         <module>guava-range-parser-core</module>
+        <module>guava-range-parser-examples</module>
         <module>guava-range-parser-jackson</module>
         <module>guava-range-parser-spring</module>
-        <module>guava-range-parser-examples</module>
     </modules>
 
     <scm>
@@ -70,6 +70,7 @@
         <jacoco.version>0.8.14</jacoco.version>
 
         <!-- Test dependency versions -->
+        <jqwik.version>1.9.3</jqwik.version>
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
 
         <!-- Plugin versions -->
@@ -137,6 +138,11 @@
                 <groupId>io.github.neewrobert</groupId>
                 <artifactId>guava-range-parser-spring</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.jqwik</groupId>
+                <artifactId>jqwik</artifactId>
+                <version>${jqwik.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
