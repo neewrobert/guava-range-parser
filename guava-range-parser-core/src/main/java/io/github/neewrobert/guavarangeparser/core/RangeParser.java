@@ -6,6 +6,7 @@ import com.google.common.collect.BoundType;
 import com.google.common.collect.Range;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Parser for converting string notation to Guava {@link Range} objects.
@@ -43,12 +44,12 @@ public final class RangeParser {
   private static final String SEPARATOR = "..";
 
   /** Positive infinity representations. */
-  private static final java.util.Set<String> POSITIVE_INFINITY =
-      java.util.Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
+  private static final Set<String> POSITIVE_INFINITY =
+      Set.of("+∞", "∞", "+inf", "inf", "+INF", "INF", "+Infinity", "Infinity");
 
   /** Negative infinity representations. */
-  private static final java.util.Set<String> NEGATIVE_INFINITY =
-      java.util.Set.of("-∞", "-inf", "-INF", "-Infinity");
+  private static final Set<String> NEGATIVE_INFINITY =
+      Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
    * Maximum allowed length for input strings.
