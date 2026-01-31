@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.convert.support.ConfigurableConversionService;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
 /**
@@ -39,6 +41,16 @@ import org.springframework.core.env.Environment;
  * my-app.stock-range=[0..100)
  * </pre>
  *
+ * <p>You can also use {@code @Value} annotations for direct injection:
+ *
+ * <pre>{@code
+ * @Component
+ * public class MyComponent {
+ *     @Value("${my-app.stock-range}")
+ *     private Range<Integer> stockRange;
+ * }
+ * }</pre>
+ *
  * <p>To enable lenient mode (for backward compatibility with bracket-less notation):
  *
  * <pre>
@@ -54,6 +66,9 @@ public class RangeConverterAutoConfiguration {
 
   /**
    * Registers the Range parser bean, allowing customization via properties.
+   *
+   * <p>Uses manual binding to avoid circular dependency with the converter factory, which is needed
+   * by the configuration properties binding system.
    *
    * @param environment the Spring environment for property binding
    * @return the configured parser
@@ -71,13 +86,29 @@ public class RangeConverterAutoConfiguration {
   /**
    * Registers the Range converter factory for Spring configuration properties binding.
    *
+   * <p>The converter is registered with both:
+   *
+   * <ul>
+   *   <li>{@code @ConfigurationPropertiesBinding} - for {@code @ConfigurationProperties} binding
+   *   <li>Environment's ConversionService - for {@code @Value} annotation support
+   * </ul>
+   *
    * @param parser the parser to use for conversion
+   * @param environment the Spring environment for registering with its conversion service
    * @return the converter factory
    */
   @Bean
   @ConditionalOnMissingBean(RangeConverterFactory.class)
   @ConfigurationPropertiesBinding
-  public RangeConverterFactory rangeConverterFactory(RangeParser parser) {
-    return new RangeConverterFactory(parser);
+  public RangeConverterFactory rangeConverterFactory(RangeParser parser, Environment environment) {
+    RangeConverterFactory factory = new RangeConverterFactory(parser);
+
+    // Register with Environment's ConversionService for @Value support
+    if (environment instanceof ConfigurableEnvironment configurableEnv) {
+      ConfigurableConversionService conversionService = configurableEnv.getConversionService();
+      conversionService.addConverter(factory);
+    }
+
+    return factory;
   }
 }

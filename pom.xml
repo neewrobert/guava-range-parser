@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.neewrobert</groupId>
@@ -50,71 +48,54 @@
     <!-- No distributionManagement needed - central-publishing-maven-plugin handles it -->
 
     <properties>
-        <!-- Build settings -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
-
-        <!-- Dependency versions -->
-        <guava.version>33.5.0-jre</guava.version>
-        <jackson.version>2.21.0</jackson.version>
-        <spring-boot.version>3.4.1</spring-boot.version>
-
-        <!-- Test dependency versions -->
-        <junit-jupiter.version>6.0.2</junit-jupiter.version>
         <assertj.version>3.27.7</assertj.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
 
-        <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
-        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
-        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <!-- Security scanning -->
+        <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
+        <error-prone-support.version>0.28.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
         <error-prone.version>2.46.0</error-prone.version>
-        <error-prone-support.version>0.28.0</error-prone-support.version>
-
-        <!-- Pitest mutation testing -->
-        <pitest.version>1.22.0</pitest.version>
-        <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
 
+        <!-- Dependency versions -->
+        <guava.version>33.5.0-jre</guava.version>
+        <jackson.version>2.21.0</jackson.version>
+
         <!-- Code coverage -->
         <jacoco.version>0.8.14</jacoco.version>
 
+        <!-- Test dependency versions -->
+        <junit-jupiter.version>6.0.2</junit-jupiter.version>
+
+        <!-- Plugin versions -->
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+
         <!-- Publishing -->
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        <pitest-junit5.version>1.2.3</pitest-junit5.version>
+
+        <!-- Pitest mutation testing -->
+        <pitest.version>1.22.0</pitest.version>
+        <!-- Build settings -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- POM sorting -->
+        <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
+        <spring-boot.version>3.4.1</spring-boot.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Project modules -->
-            <dependency>
-                <groupId>io.github.neewrobert</groupId>
-                <artifactId>guava-range-parser-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.neewrobert</groupId>
-                <artifactId>guava-range-parser-jackson</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.neewrobert</groupId>
-                <artifactId>guava-range-parser-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <!-- Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
 
             <!-- Jackson BOM - manages all Jackson module versions -->
             <dependency>
@@ -134,16 +115,39 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Testing -->
+            <!-- Guava -->
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter</artifactId>
-                <version>${junit-jupiter.version}</version>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <!-- Project modules -->
+            <dependency>
+                <groupId>io.github.neewrobert</groupId>
+                <artifactId>guava-range-parser-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.neewrobert</groupId>
+                <artifactId>guava-range-parser-jackson</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.neewrobert</groupId>
+                <artifactId>guava-range-parser-spring</artifactId>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${assertj.version}</version>
+            </dependency>
+
+            <!-- Testing -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -151,6 +155,33 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>com.github.ekryd.sortpom</groupId>
+                    <artifactId>sortpom-maven-plugin</artifactId>
+                    <version>${sortpom-maven-plugin.version}</version>
+                    <configuration>
+                        <predefinedSortOrder>recommended_2008_06</predefinedSortOrder>
+                        <sortDependencies>scope,groupId,artifactId</sortDependencies>
+                        <sortPlugins>groupId,artifactId</sortPlugins>
+                        <sortProperties>true</sortProperties>
+                        <sortModules>true</sortModules>
+                        <keepBlankLines>true</keepBlankLines>
+                        <nrOfIndentSpace>4</nrOfIndentSpace>
+                        <expandEmptyElements>false</expandEmptyElements>
+                        <createBackupFile>false</createBackupFile>
+                        <verifyFail>Stop</verifyFail>
+                        <verifyFailOn>Strict</verifyFailOn>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.spotify.fmt</groupId>
+                    <artifactId>fmt-maven-plugin</artifactId>
+                    <version>${fmt-maven-plugin.version}</version>
+                    <configuration>
+                        <style>google</style>
+                        <verbose>false</verbose>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -165,38 +196,22 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven-surefire-plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>io.github.neewrobert</groupId>
-                            <artifactId>junit5-tree-reporter</artifactId>
-                            <version>1.0.1</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-                            <theme>ASCII</theme>
-                        </statelessTestsetInfoReporter>
-                    </configuration>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <phase>verify</phase>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>${maven-jar-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>${maven-source-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -217,40 +232,63 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>${maven-gpg-plugin.version}</version>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${maven-source-plugin.version}</version>
                     <executions>
                         <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
+                            <id>attach-sources</id>
                             <goals>
-                                <goal>sign</goal>
+                                <goal>jar-no-fork</goal>
                             </goals>
                         </execution>
                     </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.central</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${central-publishing-maven-plugin.version}</version>
-                    <extensions>true</extensions>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <publishingServerId>central</publishingServerId>
-                        <autoPublish>true</autoPublish>
-                        <waitUntil>published</waitUntil>
+                        <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+                            <theme>ASCII</theme>
+                        </statelessTestsetInfoReporter>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>io.github.neewrobert</groupId>
+                            <artifactId>junit5-tree-reporter</artifactId>
+                            <version>1.0.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${dependency-check-maven.version}</version>
+                    <configuration>
+                        <failBuildOnCVSS>7</failBuildOnCVSS>
+                        <!-- Disable OSS Index analyzer (requires separate API key) -->
+                        <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                        <!-- NVD API settings -->
+                        <nvdMaxRetryCount>3</nvdMaxRetryCount>
+                        <nvdApiDelay>5000</nvdApiDelay>
+                        <!-- Don't fail if NVD is temporarily unavailable -->
+                        <failOnError>false</failOnError>
+                        <formats>
+                            <format>HTML</format>
+                            <format>JSON</format>
+                        </formats>
+                        <outputDirectory>${project.build.directory}/dependency-check</outputDirectory>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.pitest</groupId>
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.pitest</groupId>
-                            <artifactId>pitest-junit5-plugin</artifactId>
-                            <version>${pitest-junit5.version}</version>
-                        </dependency>
-                    </dependencies>
                     <configuration>
                         <targetClasses>
                             <param>io.github.neewrobert.guavarangeparser.*</param>
@@ -268,20 +306,24 @@
                         <timestampedReports>false</timestampedReports>
                         <verbose>false</verbose>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest-junit5-plugin</artifactId>
+                            <version>${pitest-junit5.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>com.spotify.fmt</groupId>
-                    <artifactId>fmt-maven-plugin</artifactId>
-                    <version>${fmt-maven-plugin.version}</version>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
                     <configuration>
-                        <style>google</style>
-                        <verbose>false</verbose>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.version}</version>
                 </plugin>
                 <!-- Note: Run with MAVEN_OPTS if needed for JDK 17+:
                      export MAVEN_OPTS="-\-add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
@@ -299,11 +341,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-gpg-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -311,7 +349,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.central</groupId>
@@ -442,10 +484,53 @@
                             </execution>
                             <execution>
                                 <id>report</id>
-                                <phase>test</phase>
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for OWASP Dependency-Check security scanning -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <id>dependency-check</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Profile for verifying POM sort order -->
+        <profile>
+            <id>sortpom</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.ekryd.sortpom</groupId>
+                        <artifactId>sortpom-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>verify-pom-sorting</id>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                                <phase>validate</phase>
                             </execution>
                         </executions>
                     </plugin>

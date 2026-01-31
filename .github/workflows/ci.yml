@@ -102,3 +102,39 @@ jobs:
           name: pitest-reports
           path: '**/target/pit-reports/'
           retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    env:
+      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+
+    steps:
+      - name: Check NVD API Key
+        run: |
+          if [ -z "$NVD_API_KEY" ]; then
+            echo "::error::NVD_API_KEY secret is not set. Skipping security scan."
+            exit 1
+          fi
+          echo "NVD API Key length: ${#NVD_API_KEY} characters"
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Run OWASP Dependency-Check
+        run: mvn verify -Pdev,security -DskipTests "-DnvdApiKey=$NVD_API_KEY"
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: dependency-check-reports
+          path: '**/target/dependency-check/'
+          retention-days: 7

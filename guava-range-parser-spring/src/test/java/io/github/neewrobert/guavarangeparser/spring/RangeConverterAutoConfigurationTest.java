@@ -115,6 +115,26 @@ class RangeConverterAutoConfigurationTest {
             });
   }
 
+  @Test
+  void converterIsRegisteredWithEnvironmentConversionService() {
+    contextRunner.run(
+        context -> {
+          var conversionService = context.getEnvironment().getConversionService();
+
+          // Verify the conversion service can convert String to Range
+          assertThat(conversionService.canConvert(String.class, Range.class)).isTrue();
+
+          // Verify actual conversion works (for @Value support)
+          // Must use TypeDescriptor to specify the generic type
+          TypeDescriptor sourceType = TypeDescriptor.valueOf(String.class);
+          TypeDescriptor targetType =
+              new TypeDescriptor(
+                  ResolvableType.forClassWithGenerics(Range.class, Integer.class), null, null);
+          Object result = conversionService.convert("[0..100)", sourceType, targetType);
+          assertThat(result).isEqualTo(Range.closedOpen(0, 100));
+        });
+  }
+
   @Configuration
   static class CustomConverterConfiguration {
     static final RangeConverterFactory CUSTOM_FACTORY = new RangeConverterFactory();
