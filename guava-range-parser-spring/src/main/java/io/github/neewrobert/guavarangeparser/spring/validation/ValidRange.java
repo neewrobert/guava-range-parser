@@ -43,7 +43,8 @@ public @interface ValidRange {
    *
    * @return the error message
    */
-  String message() default "{io.github.neewrobert.guavarangeparser.spring.validation.ValidRange.message}";
+  String message() default
+      "{io.github.neewrobert.guavarangeparser.spring.validation.ValidRange.message}";
 
   /**
    * The validation groups.
