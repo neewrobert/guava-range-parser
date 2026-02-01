@@ -191,97 +191,97 @@ class GuavaRangeParserModuleTest {
     @Test
     void deserializeClosedRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"[0..100]\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"[0..100]\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closed(0, 100));
     }
 
     @Test
     void deserializeOpenRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(0..100)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(0..100)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.open(0, 100));
     }
 
     @Test
     void deserializeClosedOpenRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"[0..100)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"[0..100)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closedOpen(0, 100));
     }
 
     @Test
     void deserializeOpenClosedRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(0..100]\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(0..100]\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.openClosed(0, 100));
     }
 
     @Test
     void deserializeAtLeastRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"[0..+∞)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"[0..+∞)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.atLeast(0));
     }
 
     @Test
     void deserializeGreaterThanRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(0..+∞)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(0..+∞)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.greaterThan(0));
     }
 
     @Test
     void deserializeAtMostRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(-∞..100]\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(-∞..100]\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.atMost(100));
     }
 
     @Test
     void deserializeLessThanRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(-∞..100)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(-∞..100)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.lessThan(100));
     }
 
     @Test
     void deserializeAllRange() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"(-∞..+∞)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"(-∞..+∞)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.all());
     }
 
     @Test
     void deserializeWithInfVariant() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"[0..+inf)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"[0..+inf)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.atLeast(0));
     }
 
     @Test
     void deserializeWithInfinityVariant() throws JsonProcessingException {
       Range<Integer> range =
-          mapper.readValue("\"[0..+Infinity)\"", new TypeReference<Range<Integer>>() {});
+          mapper.readValue("\"[0..+Infinity)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.atLeast(0));
     }
 
     @Test
     void deserializeDoubleRange() throws JsonProcessingException {
       Range<Double> range =
-          mapper.readValue("\"[0.5..1.5)\"", new TypeReference<Range<Double>>() {});
+          mapper.readValue("\"[0.5..1.5)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closedOpen(0.5, 1.5));
     }
 
     @Test
     void deserializeLongRange() throws JsonProcessingException {
       Range<Long> range =
-          mapper.readValue("\"[0..9999999999]\"", new TypeReference<Range<Long>>() {});
+          mapper.readValue("\"[0..9999999999]\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closed(0L, 9999999999L));
     }
 
     @Test
     void deserializeStringRange() throws JsonProcessingException {
-      Range<String> range = mapper.readValue("\"[a..z]\"", new TypeReference<Range<String>>() {});
+      Range<String> range = mapper.readValue("\"[a..z]\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closed("a", "z"));
     }
 
@@ -289,7 +289,7 @@ class GuavaRangeParserModuleTest {
     void deserializeLocalDateRange() throws JsonProcessingException {
       Range<LocalDate> range =
           mapper.readValue(
-              "\"[2024-01-01..2024-12-31]\"", new TypeReference<Range<LocalDate>>() {});
+              "\"[2024-01-01..2024-12-31]\"", new TypeReference<>() {});
       assertThat(range)
           .isEqualTo(Range.closed(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)));
     }
@@ -297,7 +297,7 @@ class GuavaRangeParserModuleTest {
     @Test
     void deserializeDurationRange() throws JsonProcessingException {
       Range<Duration> range =
-          mapper.readValue("\"[PT1H..PT24H)\"", new TypeReference<Range<Duration>>() {});
+          mapper.readValue("\"[PT1H..PT24H)\"", new TypeReference<>() {});
       assertThat(range).isEqualTo(Range.closedOpen(Duration.ofHours(1), Duration.ofHours(24)));
     }
   }
@@ -312,7 +312,7 @@ class GuavaRangeParserModuleTest {
     void roundTripClosedRange() throws JsonProcessingException {
       Range<Integer> original = Range.closed(0, 100);
       String json = mapper.writeValueAsString(original);
-      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
+      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<>() {});
       assertThat(deserialized).isEqualTo(original);
     }
 
@@ -320,7 +320,7 @@ class GuavaRangeParserModuleTest {
     void roundTripAllRange() throws JsonProcessingException {
       Range<Integer> original = Range.all();
       String json = mapper.writeValueAsString(original);
-      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
+      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<>() {});
       assertThat(deserialized).isEqualTo(original);
     }
 
@@ -328,7 +328,7 @@ class GuavaRangeParserModuleTest {
     void roundTripAtLeastRange() throws JsonProcessingException {
       Range<Integer> original = Range.atLeast(50);
       String json = mapper.writeValueAsString(original);
-      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<Range<Integer>>() {});
+      Range<Integer> deserialized = mapper.readValue(json, new TypeReference<>() {});
       assertThat(deserialized).isEqualTo(original);
     }
 
@@ -336,7 +336,7 @@ class GuavaRangeParserModuleTest {
     void roundTripDoubleRange() throws JsonProcessingException {
       Range<Double> original = Range.closedOpen(0.1, 0.9);
       String json = mapper.writeValueAsString(original);
-      Range<Double> deserialized = mapper.readValue(json, new TypeReference<Range<Double>>() {});
+      Range<Double> deserialized = mapper.readValue(json, new TypeReference<>() {});
       assertThat(deserialized).isEqualTo(original);
     }
   }
@@ -399,5 +399,69 @@ class GuavaRangeParserModuleTest {
     }
 
     record PriceFilter(Range<Integer> priceRange) {}
+  }
+
+  @Nested
+  class EdgeCases {
+
+    private final ObjectMapper mapper =
+        new ObjectMapper().registerModule(new GuavaRangeParserModule());
+
+    @Test
+    @SuppressWarnings("rawtypes")
+    void serializeRawRangeType() throws JsonProcessingException {
+      // Test serialization with raw Range type
+      Range range = Range.closed(1, 10);
+      String json = mapper.writeValueAsString(range);
+      assertThat(json).isEqualTo("\"[1..10]\"");
+    }
+
+    @Test
+    void deserializeRawRangeTypeThrowsError() {
+      // Raw Range<?> without a type parameter defaults to Object which has no adapter
+      assertThatThrownBy(() -> mapper.readValue("\"[0..100]\"", Range.class))
+          .isInstanceOf(InvalidFormatException.class)
+          .hasMessageContaining("No type adapter registered for: java.lang.Object");
+    }
+
+    @Test
+    void deserializeNullValue() throws JsonProcessingException {
+      // Test null handling
+      Range<Integer> result = mapper.readValue("null", new TypeReference<>() {});
+      assertThat(result).isNull();
+    }
+
+    @Test
+    void deserializeNumberTokenThrowsError() {
+      // Test when JSON contains a number instead of string
+      assertThatThrownBy(() -> mapper.readValue("123", new TypeReference<Range<Integer>>() {}))
+          .isInstanceOf(MismatchedInputException.class);
+    }
+
+    @Test
+    void deserializeBooleanTokenThrowsError() {
+      // Test when JSON contains a boolean instead of string
+      assertThatThrownBy(() -> mapper.readValue("true", new TypeReference<Range<Integer>>() {}))
+          .isInstanceOf(MismatchedInputException.class);
+    }
+
+    @Test
+    void deserializeArrayTokenThrowsError() {
+      // Test when JSON contains an array instead of string
+      assertThatThrownBy(
+              () -> mapper.readValue("[1, 2, 3]", new TypeReference<Range<Integer>>() {}))
+          .isInstanceOf(MismatchedInputException.class);
+    }
+
+    @Test
+    void deserializeInvalidRangeNotationInPojo() {
+      // Test that invalid range notation in POJO triggers error handling (line 61 coverage)
+      String json = "{\"testRange\":\"not-a-valid-range\"}";
+      assertThatThrownBy(() -> mapper.readValue(json, TestRecord.class))
+          .isInstanceOf(InvalidFormatException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    record TestRecord(Range<Integer> testRange) {}
   }
 }

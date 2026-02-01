@@ -12,6 +12,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 
 class RangeConverterAutoConfigurationTest {
 
@@ -22,9 +24,7 @@ class RangeConverterAutoConfigurationTest {
   @Test
   void autoConfigurationCreatesConverterFactory() {
     contextRunner.run(
-        context -> {
-          assertThat(context).hasSingleBean(RangeConverterFactory.class);
-        });
+        context -> assertThat(context).hasSingleBean(RangeConverterFactory.class));
   }
 
   @Test
@@ -64,9 +64,7 @@ class RangeConverterAutoConfigurationTest {
   @Test
   void autoConfigurationCreatesRangeParserBean() {
     contextRunner.run(
-        context -> {
-          assertThat(context).hasSingleBean(RangeParser.class);
-        });
+        context -> assertThat(context).hasSingleBean(RangeParser.class));
   }
 
   @Test
@@ -153,5 +151,91 @@ class RangeConverterAutoConfigurationTest {
     RangeParser rangeParser() {
       return CUSTOM_PARSER;
     }
+  }
+
+  @Test
+  void factoryCreatedWhenEnvironmentIsNotConfigurable() {
+    // Test the false branch of instanceof ConfigurableEnvironment
+    // This simulates a scenario where Environment is not a ConfigurableEnvironment
+    RangeConverterAutoConfiguration config = new RangeConverterAutoConfiguration();
+    RangeParser parser = RangeParser.builder().build();
+
+    // Create a basic Environment that is not ConfigurableEnvironment
+    Environment environment =
+        new Environment() {
+          @Override
+          public String[] getActiveProfiles() {
+            return new String[0];
+          }
+
+          @Override
+          public String[] getDefaultProfiles() {
+            return new String[0];
+          }
+
+          @Override
+          public boolean acceptsProfiles(Profiles profiles) {
+            return false;
+          }
+
+          @Override
+          @Deprecated
+          public boolean acceptsProfiles(String... profiles) {
+            return false;
+          }
+
+          @Override
+          public boolean containsProperty(String key) {
+            return false;
+          }
+
+          @Override
+          public String getProperty(String key) {
+            return null;
+          }
+
+          @Override
+          public String getProperty(String key, String defaultValue) {
+            return defaultValue;
+          }
+
+          @Override
+          public <T> T getProperty(String key, Class<T> targetType) {
+            return null;
+          }
+
+          @Override
+          public <T> T getProperty(String key, Class<T> targetType, T defaultValue) {
+            return defaultValue;
+          }
+
+          @Override
+          public String getRequiredProperty(String key) throws IllegalStateException {
+            throw new IllegalStateException("Property not found: " + key);
+          }
+
+          @Override
+          public <T> T getRequiredProperty(String key, Class<T> targetType)
+              throws IllegalStateException {
+            throw new IllegalStateException("Property not found: " + key);
+          }
+
+          @Override
+          public String resolvePlaceholders(String text) {
+            return text;
+          }
+
+          @Override
+          public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
+            return text;
+          }
+        };
+
+    // Call the method - should return factory without registering with conversion service
+    RangeConverterFactory factory = config.rangeConverterFactory(parser, environment);
+
+    // Verify factory was created
+    assertThat(factory).isNotNull();
+    assertThat(factory.getConvertibleTypes()).isNotEmpty();
   }
 }

@@ -157,6 +157,95 @@ class RangeParserTest {
   }
 
   @Nested
+  class CharacterRanges {
+
+    @Test
+    void parseClosed() {
+      Range<Character> range = RangeParser.parse("[a..z]", Character.class);
+      assertThat(range).isEqualTo(Range.closed('a', 'z'));
+    }
+
+    @Test
+    void parseOpen() {
+      Range<Character> range = RangeParser.parse("(a..z)", Character.class);
+      assertThat(range).isEqualTo(Range.open('a', 'z'));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<Character> range = RangeParser.parse("[a..z)", Character.class);
+      assertThat(range).isEqualTo(Range.closedOpen('a', 'z'));
+    }
+
+    @Test
+    void parseOpenClosed() {
+      Range<Character> range = RangeParser.parse("(a..z]", Character.class);
+      assertThat(range).isEqualTo(Range.openClosed('a', 'z'));
+    }
+
+    @Test
+    void parseNumericCharacters() {
+      Range<Character> range = RangeParser.parse("[0..9]", Character.class);
+      assertThat(range).isEqualTo(Range.closed('0', '9'));
+    }
+
+    @Test
+    void parseSpecialCharacters() {
+      Range<Character> range = RangeParser.parse("[!..?]", Character.class);
+      assertThat(range).isEqualTo(Range.closed('!', '?'));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<Character> range = RangeParser.parse("[a..+∞)", Character.class);
+      assertThat(range).isEqualTo(Range.atLeast('a'));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<Character> range = RangeParser.parse("(-∞..z]", Character.class);
+      assertThat(range).isEqualTo(Range.atMost('z'));
+    }
+
+    @Test
+    void throwsOnMultiCharacterString() {
+      assertThatThrownBy(() -> RangeParser.parse("[ab..xy]", Character.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Expected single character but got: 'ab'");
+    }
+
+    @Test
+    void throwsOnMultiCharacterUpperBound() {
+      assertThatThrownBy(() -> RangeParser.parse("[a..xyz]", Character.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Expected single character but got: 'xyz'");
+    }
+
+    @Test
+    void characterAdapterThrowsOnEmptyString() {
+      // Test the CHARACTER TypeAdapter directly for edge cases
+      assertThatThrownBy(() -> BuiltInTypeAdapters.CHARACTER.parse(""))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Expected single character but got: ''");
+    }
+
+    @Test
+    void characterAdapterThrowsOnMultiCharacterString() {
+      assertThatThrownBy(() -> BuiltInTypeAdapters.CHARACTER.parse("abc"))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Expected single character but got: 'abc'");
+    }
+
+    @Test
+    void characterAdapterParsesValidSingleCharacter() {
+      assertThat(BuiltInTypeAdapters.CHARACTER.parse("a")).isEqualTo('a');
+      assertThat(BuiltInTypeAdapters.CHARACTER.parse("Z")).isEqualTo('Z');
+      assertThat(BuiltInTypeAdapters.CHARACTER.parse("0")).isEqualTo('0');
+      assertThat(BuiltInTypeAdapters.CHARACTER.parse("!")).isEqualTo('!');
+    }
+  }
+
+  @Nested
   class DoubleRanges {
 
     @Test
@@ -324,6 +413,21 @@ class RangeParserTest {
       Range<Integer> range = parser.parseRange("0..100", Integer.class);
       assertThat(range).isEqualTo(Range.closedOpen(0, 100));
     }
+
+    @Test
+    void lenientModeIgnoresInputWithBrackets() {
+      // Test the branch where lenient=true but input already has brackets
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      Range<Integer> range = parser.parseRange("[0..100]", Integer.class);
+      assertThat(range).isEqualTo(Range.closed(0, 100));
+    }
+
+    @Test
+    void lenientModeIgnoresInputWithParentheses() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      Range<Integer> range = parser.parseRange("(0..100)", Integer.class);
+      assertThat(range).isEqualTo(Range.open(0, 100));
+    }
   }
 
   @Nested
@@ -334,6 +438,38 @@ class RangeParserTest {
       assertThatThrownBy(() -> RangeParser.parse("", Integer.class))
           .isInstanceOf(RangeParseException.class)
           .hasMessageContaining("cannot be empty");
+    }
+
+    @Test
+    void throwsOnTooShortInput() {
+      assertThatThrownBy(() -> RangeParser.parse("[1..", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void throwsOnInvalidClosingBracket() {
+      assertThatThrownBy(() -> RangeParser.parse("[0..100}", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void throwsOnEmptyLowerBound() {
+      // This creates a case where lowerPart is empty after trimming
+      RangeParser parser = RangeParser.builder().lenient(false).build();
+      assertThatThrownBy(() -> parser.parseRange("[  ..100]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void throwsOnEmptyUpperBound() {
+      // This creates a case where upperPart is empty after trimming
+      RangeParser parser = RangeParser.builder().lenient(false).build();
+      assertThatThrownBy(() -> parser.parseRange("[0..  ]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
     }
 
     @Test
