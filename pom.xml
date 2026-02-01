@@ -50,7 +50,7 @@
 
     <properties>
         <assertj.version>3.27.7</assertj.version>
-        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>1.1.1</central-publishing-maven-plugin.version>
 
         <!-- Security scanning -->
         <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
@@ -322,7 +322,7 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>org.sonatype.central</groupId>
+                    <groupId>io.github.mavenplugins</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
                     <version>${central-publishing-maven-plugin.version}</version>
                     <extensions>true</extensions>
@@ -363,7 +363,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.central</groupId>
+                <groupId>io.github.mavenplugins</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
         </plugins>
