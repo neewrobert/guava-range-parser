@@ -23,8 +23,7 @@ class RangeConverterAutoConfigurationTest {
 
   @Test
   void autoConfigurationCreatesConverterFactory() {
-    contextRunner.run(
-        context -> assertThat(context).hasSingleBean(RangeConverterFactory.class));
+    contextRunner.run(context -> assertThat(context).hasSingleBean(RangeConverterFactory.class));
   }
 
   @Test
@@ -63,8 +62,7 @@ class RangeConverterAutoConfigurationTest {
 
   @Test
   void autoConfigurationCreatesRangeParserBean() {
-    contextRunner.run(
-        context -> assertThat(context).hasSingleBean(RangeParser.class));
+    contextRunner.run(context -> assertThat(context).hasSingleBean(RangeParser.class));
   }
 
   @Test
