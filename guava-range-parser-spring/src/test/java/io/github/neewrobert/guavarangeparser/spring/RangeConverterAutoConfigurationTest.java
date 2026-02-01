@@ -173,18 +173,19 @@ class RangeConverterAutoConfigurationTest {
         newProxyInstance(
             Environment.class.getClassLoader(),
             new Class<?>[] {Environment.class},
-            (proxy, method, args) -> switch (method.getName()) {
-              case "getActiveProfiles", "getDefaultProfiles" -> new String[0];
-              case "containsProperty", "acceptsProfiles" -> false;
-              case "getProperty" -> args != null && args.length > 1 ? args[1] : null;
-              case "resolvePlaceholders", "resolveRequiredPlaceholders" ->
-                  args != null && args.length > 0 ? args[0] : "";
-              case "equals" -> proxy == args[0];
-              case "hashCode" -> System.identityHashCode(proxy);
-              case "toString" ->
-                  "NonConfigurableEnvironment@"
-                      + Integer.toHexString(System.identityHashCode(proxy));
-              default -> null;
-            });
+            (proxy, method, args) ->
+                switch (method.getName()) {
+                  case "getActiveProfiles", "getDefaultProfiles" -> new String[0];
+                  case "containsProperty", "acceptsProfiles" -> false;
+                  case "getProperty" -> args != null && args.length > 1 ? args[1] : null;
+                  case "resolvePlaceholders", "resolveRequiredPlaceholders" ->
+                      args != null && args.length > 0 ? args[0] : "";
+                  case "equals" -> proxy == args[0];
+                  case "hashCode" -> System.identityHashCode(proxy);
+                  case "toString" ->
+                      "NonConfigurableEnvironment@"
+                          + Integer.toHexString(System.identityHashCode(proxy));
+                  default -> null;
+                });
   }
 }
