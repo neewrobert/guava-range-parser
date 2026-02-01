@@ -93,7 +93,7 @@
 
         <!-- POM sorting -->
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-boot.version>3.5.10</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -256,14 +256,14 @@
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
                         <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
-                            <theme>ASCII</theme>
+                            <theme>MINIMAL</theme>
                         </statelessTestsetInfoReporter>
                     </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>io.github.neewrobert</groupId>
                             <artifactId>junit5-tree-reporter</artifactId>
-                            <version>1.0.1</version>
+                            <version>1.0.2</version>
                         </dependency>
                     </dependencies>
                 </plugin>
