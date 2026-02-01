@@ -48,6 +48,24 @@ public final class RangeParser {
   private static final Set<String> NEGATIVE_INFINITY = Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
+   * Internal record to hold parsed range parts.
+   *
+   * @param lowerPart the lower bound string value
+   * @param upperPart the upper bound string value
+   * @param lowerBoundType the type of the lower bound (OPEN or CLOSED)
+   * @param upperBoundType the type of the upper bound (OPEN or CLOSED)
+   * @param lowerUnbounded whether the lower bound is infinity
+   * @param upperUnbounded whether the upper bound is infinity
+   */
+  private record RangeParts(
+      String lowerPart,
+      String upperPart,
+      BoundType lowerBoundType,
+      BoundType upperBoundType,
+      boolean lowerUnbounded,
+      boolean upperUnbounded) {}
+
+  /**
    * Maximum allowed length for input strings.
    *
    * <p>This limit prevents denial-of-service attacks via extremely long input strings that could
@@ -104,8 +122,33 @@ public final class RangeParser {
    * @return the parsed Range
    * @throws RangeParseException if the string cannot be parsed
    */
-  @SuppressWarnings("unchecked")
   public <T extends Comparable<?>> Range<T> parseRange(String rangeString, Class<T> elementType) {
+    validateInput(rangeString, elementType);
+    String normalized = normalizeInput(rangeString);
+    RangeParts parts = extractRangeParts(normalized, rangeString);
+    validateInfinityBounds(parts, rangeString);
+    TypeAdapter<T> adapter = getTypeAdapter(elementType, rangeString);
+
+    try {
+      return buildRange(
+          parts.lowerPart(),
+          parts.upperPart(),
+          parts.lowerBoundType(),
+          parts.upperBoundType(),
+          parts.lowerUnbounded(),
+          parts.upperUnbounded(),
+          adapter);
+    } catch (Exception e) {
+      if (e instanceof RangeParseException) {
+        throw (RangeParseException) e;
+      }
+      throw new RangeParseException(
+          "Failed to parse range value: " + e.getMessage(), rangeString, 0, e);
+    }
+  }
+
+  /** Validates that input parameters are not null and input string is within size limits. */
+  private void validateInput(String rangeString, Class<?> elementType) {
     requireNonNull(rangeString, "rangeString must not be null");
     requireNonNull(elementType, "elementType must not be null");
 
@@ -115,41 +158,46 @@ public final class RangeParser {
           rangeString.substring(0, 50) + "...",
           0);
     }
+  }
 
+  /** Normalizes input by trimming whitespace and applying lenient mode if enabled. */
+  private String normalizeInput(String rangeString) {
     String trimmed = rangeString.trim();
     if (trimmed.isEmpty()) {
       throw new RangeParseException("Range string cannot be empty", rangeString, 0);
     }
 
     if (lenient && !trimmed.startsWith("[") && !trimmed.startsWith("(")) {
-      trimmed = "[" + trimmed + ")";
+      return "[" + trimmed + ")";
     }
 
-    // Validate and extract brackets (manual parsing to avoid ReDoS)
-    if (trimmed.length() < 5) { // Minimum: "[a..b]"
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
-    }
+    return trimmed;
+  }
 
-    char openingBracket = trimmed.charAt(0);
-    char closingBracket = trimmed.charAt(trimmed.length() - 1);
+  /**
+   * Extracts and validates range parts from the normalized input string.
+   *
+   * @param normalized the normalized input string
+   * @param original the original input string (for error messages)
+   * @return parsed range parts
+   */
+  private RangeParts extractRangeParts(String normalized, String original) {
+    validateFormat(normalized, original);
 
-    if ((openingBracket != '[' && openingBracket != '(')
-        || (closingBracket != ']' && closingBracket != ')')) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
-    }
+    char openingBracket = normalized.charAt(0);
+    char closingBracket = normalized.charAt(normalized.length() - 1);
 
-    // Find the separator ".." - search from position 1 to avoid matching decimal points
-    String content = trimmed.substring(1, trimmed.length() - 1);
+    String content = normalized.substring(1, normalized.length() - 1);
     int separatorIndex = content.indexOf(SEPARATOR);
     if (separatorIndex == -1) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
     }
 
     String lowerPart = content.substring(0, separatorIndex).trim();
     String upperPart = content.substring(separatorIndex + SEPARATOR.length()).trim();
 
     if (lowerPart.isEmpty() || upperPart.isEmpty()) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, rangeString, 0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
     }
 
     BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
@@ -158,37 +206,47 @@ public final class RangeParser {
     boolean lowerUnbounded = NEGATIVE_INFINITY.contains(lowerPart);
     boolean upperUnbounded = POSITIVE_INFINITY.contains(upperPart);
 
-    // Validate: infinity bounds must be open (mathematical convention)
-    if (lowerUnbounded && lowerBoundType == BoundType.CLOSED) {
+    return new RangeParts(
+        lowerPart, upperPart, lowerBoundType, upperBoundType, lowerUnbounded, upperUnbounded);
+  }
+
+  /** Validates the basic format of the range string (brackets and length). */
+  private void validateFormat(String normalized, String original) {
+    if (normalized.length() < 6) { // Minimum: "[a..b]"
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+    }
+
+    char openingBracket = normalized.charAt(0);
+    char closingBracket = normalized.charAt(normalized.length() - 1);
+
+    if ((openingBracket != '[' && openingBracket != '(')
+        || (closingBracket != ']' && closingBracket != ')')) {
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+    }
+  }
+
+  /** Validates that infinity bounds are open (mathematical convention). */
+  private void validateInfinityBounds(RangeParts parts, String rangeString) {
+    if (parts.lowerUnbounded() && parts.lowerBoundType() == BoundType.CLOSED) {
       throw new RangeParseException(
           "Invalid range: negative infinity bound must be open '(' not closed '['", rangeString, 0);
     }
-    if (upperUnbounded && upperBoundType == BoundType.CLOSED) {
+    if (parts.upperUnbounded() && parts.upperBoundType() == BoundType.CLOSED) {
       throw new RangeParseException(
           "Invalid range: positive infinity bound must be open ')' not closed ']'", rangeString, 0);
     }
+  }
 
+  /** Gets the type adapter for the given element type. */
+  @SuppressWarnings("unchecked")
+  private <T extends Comparable<?>> TypeAdapter<T> getTypeAdapter(
+      Class<T> elementType, String rangeString) {
     TypeAdapter<T> adapter = (TypeAdapter<T>) typeAdapters.get(elementType);
     if (adapter == null) {
       throw new RangeParseException(
           "No type adapter registered for: " + elementType.getName(), rangeString, 0);
     }
-
-    try {
-      return buildRange(
-          lowerPart,
-          upperPart,
-          lowerBoundType,
-          upperBoundType,
-          lowerUnbounded,
-          upperUnbounded,
-          adapter);
-    } catch (RangeParseException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new RangeParseException(
-          "Failed to parse range value: " + e.getMessage(), rangeString, 0, e);
-    }
+    return adapter;
   }
 
   @SuppressWarnings("unchecked")

@@ -1,5 +1,6 @@
 package io.github.neewrobert.guavarangeparser.spring;
 
+import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.core.env.Environment;
 
 class RangeConverterAutoConfigurationTest {
 
@@ -21,10 +23,7 @@ class RangeConverterAutoConfigurationTest {
 
   @Test
   void autoConfigurationCreatesConverterFactory() {
-    contextRunner.run(
-        context -> {
-          assertThat(context).hasSingleBean(RangeConverterFactory.class);
-        });
+    contextRunner.run(context -> assertThat(context).hasSingleBean(RangeConverterFactory.class));
   }
 
   @Test
@@ -63,10 +62,7 @@ class RangeConverterAutoConfigurationTest {
 
   @Test
   void autoConfigurationCreatesRangeParserBean() {
-    contextRunner.run(
-        context -> {
-          assertThat(context).hasSingleBean(RangeParser.class);
-        });
+    contextRunner.run(context -> assertThat(context).hasSingleBean(RangeParser.class));
   }
 
   @Test
@@ -153,5 +149,43 @@ class RangeConverterAutoConfigurationTest {
     RangeParser rangeParser() {
       return CUSTOM_PARSER;
     }
+  }
+
+  @Test
+  void factoryCreatedWhenEnvironmentIsNotConfigurable() {
+    // Test the false branch of instanceof ConfigurableEnvironment
+    // This simulates a scenario where Environment is not a ConfigurableEnvironment
+    RangeConverterAutoConfiguration config = new RangeConverterAutoConfiguration();
+    RangeParser parser = RangeParser.builder().build();
+
+    Environment environment = nonConfigurableEnvironment();
+
+    // Call the method - should return factory without registering with conversion service
+    RangeConverterFactory factory = config.rangeConverterFactory(parser, environment);
+
+    // Verify factory was created
+    assertThat(factory).isNotNull();
+    assertThat(factory.getConvertibleTypes()).isNotEmpty();
+  }
+
+  private static Environment nonConfigurableEnvironment() {
+    return (Environment)
+        newProxyInstance(
+            Environment.class.getClassLoader(),
+            new Class<?>[] {Environment.class},
+            (proxy, method, args) ->
+                switch (method.getName()) {
+                  case "getActiveProfiles", "getDefaultProfiles" -> new String[0];
+                  case "containsProperty", "acceptsProfiles" -> false;
+                  case "getProperty" -> args != null && args.length > 1 ? args[1] : null;
+                  case "resolvePlaceholders", "resolveRequiredPlaceholders" ->
+                      args != null && args.length > 0 ? args[0] : "";
+                  case "equals" -> args != null && args.length > 0 && proxy == args[0];
+                  case "hashCode" -> System.identityHashCode(proxy);
+                  case "toString" ->
+                      "NonConfigurableEnvironment@"
+                          + Integer.toHexString(System.identityHashCode(proxy));
+                  default -> null;
+                });
   }
 }

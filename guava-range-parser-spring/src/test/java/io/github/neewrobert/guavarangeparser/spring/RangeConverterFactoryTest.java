@@ -222,6 +222,23 @@ class RangeConverterFactoryTest {
           .hasMessageContaining("Cannot determine Range element type")
           .hasMessageContaining("parameterized type");
     }
+
+    @Test
+    void throwsWhenGenericTypeResolvesToNull() {
+      // Create a TypeDescriptor where the generic parameter truly resolves to null
+      // This happens with wildcards or type variables that can't be resolved
+      ResolvableType wildcardType =
+          ResolvableType.forClassWithGenerics(Range.class, ResolvableType.NONE);
+      TypeDescriptor typeDescriptor = new TypeDescriptor(wildcardType, Range.class, null);
+
+      assertThatThrownBy(
+              () ->
+                  converter.convert(
+                      "[0..100]", TypeDescriptor.valueOf(String.class), typeDescriptor))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessageContaining("Cannot determine Range element type")
+          .hasMessageContaining("parameterized type");
+    }
   }
 
   private Range<?> convert(String source, Class<?> elementType) {
