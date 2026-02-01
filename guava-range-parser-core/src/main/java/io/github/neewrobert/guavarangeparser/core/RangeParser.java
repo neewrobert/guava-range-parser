@@ -48,7 +48,7 @@ public final class RangeParser {
   private static final Set<String> NEGATIVE_INFINITY = Set.of("-∞", "-inf", "-INF", "-Infinity");
 
   /**
-   * n * Internal record to hold parsed range parts.
+   * Internal record to hold parsed range parts.
    *
    * @param lowerPart the lower bound string value
    * @param upperPart the upper bound string value
