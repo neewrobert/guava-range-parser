@@ -440,7 +440,7 @@ class GuavaRangeParserModuleTest {
 
     @Test
     void deserializeInvalidRangeNotationInPojo() {
-      // Test that invalid range notation in POJO triggers error handling (line 61 coverage)
+      // Invalid range notation in a POJO field should surface as an InvalidFormatException
       String json = "{\"testRange\":\"not-a-valid-range\"}";
       assertThatThrownBy(() -> mapper.readValue(json, TestRecord.class))
           .isInstanceOf(InvalidFormatException.class)
