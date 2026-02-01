@@ -1,5 +1,6 @@
 package io.github.neewrobert.guavarangeparser.spring;
 
+import static java.lang.reflect.Proxy.newProxyInstance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 
 class RangeConverterAutoConfigurationTest {
 
@@ -169,73 +169,22 @@ class RangeConverterAutoConfigurationTest {
   }
 
   private static Environment nonConfigurableEnvironment() {
-    return new Environment() {
-      @Override
-      public String[] getActiveProfiles() {
-        return new String[0];
-      }
-
-      @Override
-      public String[] getDefaultProfiles() {
-        return new String[0];
-      }
-
-      @Override
-      public boolean acceptsProfiles(Profiles profiles) {
-        return false;
-      }
-
-      @Override
-      @Deprecated
-      public boolean acceptsProfiles(String... profiles) {
-        return false;
-      }
-
-      @Override
-      public boolean containsProperty(String key) {
-        return false;
-      }
-
-      @Override
-      public String getProperty(String key) {
-        return null;
-      }
-
-      @Override
-      public String getProperty(String key, String defaultValue) {
-        return defaultValue;
-      }
-
-      @Override
-      public <T> T getProperty(String key, Class<T> targetType) {
-        return null;
-      }
-
-      @Override
-      public <T> T getProperty(String key, Class<T> targetType, T defaultValue) {
-        return defaultValue;
-      }
-
-      @Override
-      public String getRequiredProperty(String key) throws IllegalStateException {
-        throw new IllegalStateException("Property not found: " + key);
-      }
-
-      @Override
-      public <T> T getRequiredProperty(String key, Class<T> targetType)
-          throws IllegalStateException {
-        throw new IllegalStateException("Property not found: " + key);
-      }
-
-      @Override
-      public String resolvePlaceholders(String text) {
-        return text;
-      }
-
-      @Override
-      public String resolveRequiredPlaceholders(String text) throws IllegalArgumentException {
-        return text;
-      }
-    };
+    return (Environment)
+        newProxyInstance(
+            Environment.class.getClassLoader(),
+            new Class<?>[] {Environment.class},
+            (proxy, method, args) -> switch (method.getName()) {
+              case "getActiveProfiles", "getDefaultProfiles" -> new String[0];
+              case "containsProperty", "acceptsProfiles" -> false;
+              case "getProperty" -> args != null && args.length > 1 ? args[1] : null;
+              case "resolvePlaceholders", "resolveRequiredPlaceholders" ->
+                  args != null && args.length > 0 ? args[0] : "";
+              case "equals" -> proxy == args[0];
+              case "hashCode" -> System.identityHashCode(proxy);
+              case "toString" ->
+                  "NonConfigurableEnvironment@"
+                      + Integer.toHexString(System.identityHashCode(proxy));
+              default -> null;
+            });
   }
 }
