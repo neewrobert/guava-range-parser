@@ -138,9 +138,10 @@ public final class RangeParser {
           parts.lowerUnbounded(),
           parts.upperUnbounded(),
           adapter);
-    } catch (RangeParseException e) {
-      throw e;
     } catch (Exception e) {
+      if (e instanceof RangeParseException) {
+        throw (RangeParseException) e;
+      }
       throw new RangeParseException(
           "Failed to parse range value: " + e.getMessage(), rangeString, 0, e);
     }
