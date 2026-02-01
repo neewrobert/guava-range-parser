@@ -180,7 +180,7 @@ class RangeConverterAutoConfigurationTest {
                   case "getProperty" -> args != null && args.length > 1 ? args[1] : null;
                   case "resolvePlaceholders", "resolveRequiredPlaceholders" ->
                       args != null && args.length > 0 ? args[0] : "";
-                  case "equals" -> proxy == args[0];
+                  case "equals" -> args != null && args.length > 0 && proxy == args[0];
                   case "hashCode" -> System.identityHashCode(proxy);
                   case "toString" ->
                       "NonConfigurableEnvironment@"
