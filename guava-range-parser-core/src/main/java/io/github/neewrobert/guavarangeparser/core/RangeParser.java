@@ -212,7 +212,7 @@ public final class RangeParser {
 
   /** Validates the basic format of the range string (brackets and length). */
   private void validateFormat(String normalized, String original) {
-    if (normalized.length() < 5) { // Minimum: "[a..b]"
+    if (normalized.length() < 6) { // Minimum: "[a..b]"
       throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
     }
 
