@@ -74,7 +74,7 @@
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
 
         <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
         <!-- Publishing -->
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
