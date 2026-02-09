@@ -57,7 +57,7 @@
         <error-prone-support.version>0.28.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
-        <error-prone.version>2.46.0</error-prone.version>
+        <error-prone.version>2.47.0</error-prone.version>
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
@@ -74,7 +74,7 @@
         <junit-jupiter.version>6.0.2</junit-jupiter.version>
 
         <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
         <!-- Publishing -->
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
@@ -86,7 +86,7 @@
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Pitest mutation testing -->
-        <pitest.version>1.22.0</pitest.version>
+        <pitest.version>1.22.1</pitest.version>
         <!-- Build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
