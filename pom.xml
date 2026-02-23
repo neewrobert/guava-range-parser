@@ -57,36 +57,36 @@
         <error-prone-support.version>0.28.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
-        <error-prone.version>2.46.0</error-prone.version>
+        <error-prone.version>2.47.0</error-prone.version>
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
 
         <!-- Dependency versions -->
         <guava.version>33.5.0-jre</guava.version>
-        <jackson.version>2.21.0</jackson.version>
+        <jackson.version>2.21.1</jackson.version>
 
         <!-- Code coverage -->
         <jacoco.version>0.8.14</jacoco.version>
 
         <!-- Test dependency versions -->
         <jqwik.version>1.9.3</jqwik.version>
-        <junit-jupiter.version>6.0.2</junit-jupiter.version>
+        <junit-jupiter.version>6.0.3</junit-jupiter.version>
 
         <!-- Plugin versions -->
-        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
 
         <!-- Publishing -->
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Pitest mutation testing -->
-        <pitest.version>1.22.0</pitest.version>
+        <pitest.version>1.22.1</pitest.version>
         <!-- Build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
