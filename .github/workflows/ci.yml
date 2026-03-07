@@ -65,7 +65,7 @@ jobs:
         run: mvn clean test -Pcoverage
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-reports
           path: '**/target/site/jacoco/'
@@ -96,7 +96,7 @@ jobs:
           mvn pitest:mutationCoverage -pl guava-range-parser-spring -Ppitest
 
       - name: Upload mutation reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: pitest-reports
@@ -132,7 +132,7 @@ jobs:
         run: mvn verify -Pdev,security -DskipTests "-DnvdApiKey=$NVD_API_KEY"
 
       - name: Upload security reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: dependency-check-reports
