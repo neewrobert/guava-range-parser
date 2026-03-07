@@ -4,7 +4,7 @@
 
 .PHONY: help build clean test coverage run-examples install \
         format format-check security pitest errorprone sortpom sortpom-check \
-        benchmark benchmark-quick \
+        benchmark benchmark-quick benchmark-save benchmark-compare \
         version-get version-set release release-check
 
 # Default target
@@ -32,8 +32,10 @@ help:
 	@echo "    make sortpom-check  - Verify pom.xml sorting (CI)"
 	@echo ""
 	@echo "  Benchmarks:"
-	@echo "    make benchmark       - Run all JMH benchmarks (full run, ~10 min)"
-	@echo "    make benchmark-quick - Run benchmarks with fewer iterations (~2 min)"
+	@echo "    make benchmark         - Run all JMH benchmarks (full run, ~10 min)"
+	@echo "    make benchmark-quick   - Run benchmarks with fewer iterations (~2 min)"
+	@echo "    make benchmark-save    - Save latest results as a versioned baseline"
+	@echo "    make benchmark-compare - Compare latest results against saved baseline"
 	@echo ""
 	@echo "  Security:"
 	@echo "    make security       - Run OWASP Dependency-Check (requires NVD_API_KEY)"
@@ -110,15 +112,52 @@ sortpom-check:
 
 benchmark:
 	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
-	java -jar guava-range-parser-benchmarks/target/benchmarks.jar
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar \
+		-rf json -rff guava-range-parser-benchmarks/results/latest.json
 	@echo ""
-	@echo "Benchmark results printed above."
+	@echo "Results saved to guava-range-parser-benchmarks/results/latest.json"
 
 benchmark-quick:
 	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
-	java -jar guava-range-parser-benchmarks/target/benchmarks.jar -wi 1 -i 3 -f 1 -t 1
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar -wi 1 -i 3 -f 1 -t 1 \
+		-rf json -rff guava-range-parser-benchmarks/results/latest.json
 	@echo ""
-	@echo "Benchmark results printed above (quick mode)."
+	@echo "Results saved to guava-range-parser-benchmarks/results/latest.json (quick mode)."
+
+benchmark-save:
+	@if [ ! -f guava-range-parser-benchmarks/results/latest.json ]; then \
+		echo "No results to save. Run 'make benchmark' first."; \
+		exit 1; \
+	fi
+	@VERSION=$$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); \
+	cp guava-range-parser-benchmarks/results/latest.json \
+		"guava-range-parser-benchmarks/results/baseline-$$VERSION.json"; \
+	echo "Saved baseline as guava-range-parser-benchmarks/results/baseline-$$VERSION.json"
+
+benchmark-compare:
+	@if [ ! -f guava-range-parser-benchmarks/results/latest.json ]; then \
+		echo "No latest results. Run 'make benchmark' first."; \
+		exit 1; \
+	fi
+	@BASELINE=$$(ls -t guava-range-parser-benchmarks/results/baseline-*.json 2>/dev/null | head -1); \
+	if [ -z "$$BASELINE" ]; then \
+		echo "No baseline found. Run 'make benchmark-save' to save one."; \
+		exit 1; \
+	fi; \
+	echo "Comparing latest vs $$BASELINE"; \
+	echo ""; \
+	echo "Benchmark                                          | Baseline   | Latest     | Change"; \
+	echo "---------------------------------------------------|------------|------------|--------"; \
+	python3 -c " \
+import json, sys; \
+b = {r['benchmark'].split('.')[-1]: r['primaryMetric']['score'] for r in json.load(open('$$BASELINE'))}; \
+l = {r['benchmark'].split('.')[-1]: r['primaryMetric']['score'] for r in json.load(open('guava-range-parser-benchmarks/results/latest.json'))}; \
+for name in sorted(set(b) | set(l)): \
+    bs, ls = b.get(name, 0), l.get(name, 0); \
+    pct = ((ls - bs) / bs * 100) if bs else 0; \
+    flag = '!!!' if abs(pct) > 10 else ''; \
+    print(f'{name:<51}| {bs:>9.3f}  | {ls:>9.3f}  | {pct:>+6.1f}% {flag}') \
+"
 
 # =============================================================================
 # Security

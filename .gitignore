@@ -74,3 +74,6 @@ Thumbs.db
 
 # jqwik property-based testing
 .jqwik-database
+
+# JMH benchmark results (baselines are committed, latest is transient)
+guava-range-parser-benchmarks/results/latest.json
