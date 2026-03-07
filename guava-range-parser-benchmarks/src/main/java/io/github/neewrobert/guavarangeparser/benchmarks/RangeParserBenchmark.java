@@ -117,7 +117,7 @@ public class RangeParserBenchmark {
     return lenientParser.parseRange("[0..100]", Integer.class);
   }
 
-  // --- Static method (creates default parser each time vs reused instance) ---
+  // --- Static method (delegates to DEFAULT_INSTANCE, measures static dispatch overhead) ---
 
   @Benchmark
   public Range<Integer> parseStaticMethod() {
