@@ -4,6 +4,7 @@
 
 .PHONY: help build clean test coverage run-examples install \
         format format-check security pitest errorprone sortpom sortpom-check \
+        benchmark benchmark-quick \
         version-get version-set release release-check
 
 # Default target
@@ -29,6 +30,10 @@ help:
 	@echo "    make errorprone     - Run Error Prone static analysis"
 	@echo "    make sortpom        - Sort pom.xml files"
 	@echo "    make sortpom-check  - Verify pom.xml sorting (CI)"
+	@echo ""
+	@echo "  Benchmarks:"
+	@echo "    make benchmark       - Run all JMH benchmarks (full run, ~10 min)"
+	@echo "    make benchmark-quick - Run benchmarks with fewer iterations (~2 min)"
 	@echo ""
 	@echo "  Security:"
 	@echo "    make security       - Run OWASP Dependency-Check (requires NVD_API_KEY)"
@@ -98,6 +103,22 @@ sortpom:
 
 sortpom-check:
 	mvn validate -Psortpom
+
+# =============================================================================
+# Benchmarks
+# =============================================================================
+
+benchmark:
+	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar
+	@echo ""
+	@echo "Benchmark results printed above."
+
+benchmark-quick:
+	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar -wi 1 -i 3 -f 1 -t 1
+	@echo ""
+	@echo "Benchmark results printed above (quick mode)."
 
 # =============================================================================
 # Security
