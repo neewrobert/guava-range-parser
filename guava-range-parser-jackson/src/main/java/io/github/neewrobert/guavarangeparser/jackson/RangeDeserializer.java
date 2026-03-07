@@ -22,11 +22,10 @@ import java.io.IOException;
 class RangeDeserializer extends JsonDeserializer<Range<?>> implements ContextualDeserializer {
 
   private final JavaType elementType;
-  private final RangeParser parser;
+  private static final RangeParser PARSER = RangeParser.builder().build();
 
   RangeDeserializer(JavaType elementType) {
     this.elementType = elementType;
-    this.parser = RangeParser.builder().build();
   }
 
   @Override
@@ -56,7 +55,7 @@ class RangeDeserializer extends JsonDeserializer<Range<?>> implements Contextual
     Class<T> rawClass = (Class<T>) elementType.getRawClass();
 
     try {
-      return parser.parseRange(notation, rawClass);
+      return PARSER.parseRange(notation, rawClass);
     } catch (RangeParseException e) {
       return (Range<T>) ctxt.handleWeirdStringValue(Range.class, notation, e.getMessage());
     }

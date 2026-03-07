@@ -56,7 +56,7 @@ public final class RangeParseException extends RuntimeException {
   /**
    * Returns the position in the input where the error occurred.
    *
-   * @return the error position (0-based index)
+   * @return the error position (0-based index), or -1 if no specific position applies
    */
   public int getPosition() {
     return position;
@@ -66,8 +66,8 @@ public final class RangeParseException extends RuntimeException {
     StringBuilder sb = new StringBuilder();
     sb.append(message);
     sb.append("\n  Input: \"").append(input).append("\"");
-    if (position > 0 && position < input.length()) {
-      sb.append("\n         ");
+    if (position >= 0 && position < input.length()) {
+      sb.append("\n          ");
       sb.append(" ".repeat(position));
       sb.append("^");
     }

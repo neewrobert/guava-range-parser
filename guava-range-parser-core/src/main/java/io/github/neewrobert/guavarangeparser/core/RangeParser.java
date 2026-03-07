@@ -56,6 +56,10 @@ public final class RangeParser {
    * @param upperBoundType the type of the upper bound (OPEN or CLOSED)
    * @param lowerUnbounded whether the lower bound is infinity
    * @param upperUnbounded whether the upper bound is infinity
+   * @param openBracketPos position of opening bracket in original input, or -1
+   * @param closeBracketPos position of closing bracket in original input, or -1
+   * @param lowerPartPos position of lower bound value in original input
+   * @param upperPartPos position of upper bound value in original input
    */
   private record RangeParts(
       String lowerPart,
@@ -63,7 +67,11 @@ public final class RangeParser {
       BoundType lowerBoundType,
       BoundType upperBoundType,
       boolean lowerUnbounded,
-      boolean upperUnbounded) {}
+      boolean upperUnbounded,
+      int openBracketPos,
+      int closeBracketPos,
+      int lowerPartPos,
+      int upperPartPos) {}
 
   /**
    * Maximum allowed length for input strings.
@@ -130,20 +138,13 @@ public final class RangeParser {
     TypeAdapter<T> adapter = getTypeAdapter(elementType, rangeString);
 
     try {
-      return buildRange(
-          parts.lowerPart(),
-          parts.upperPart(),
-          parts.lowerBoundType(),
-          parts.upperBoundType(),
-          parts.lowerUnbounded(),
-          parts.upperUnbounded(),
-          adapter);
+      return buildRange(parts, adapter, rangeString);
     } catch (Exception e) {
-      if (e instanceof RangeParseException) {
-        throw (RangeParseException) e;
+      if (e instanceof RangeParseException rpe) {
+        throw rpe;
       }
       throw new RangeParseException(
-          "Failed to parse range value: " + e.getMessage(), rangeString, 0, e);
+          "Failed to parse range value: " + e.getMessage(), rangeString, -1, e);
     }
   }
 
@@ -156,7 +157,7 @@ public final class RangeParser {
       throw new RangeParseException(
           "Input exceeds maximum length of " + MAX_INPUT_LENGTH + " characters",
           rangeString.substring(0, 50) + "...",
-          0);
+          -1);
     }
   }
 
@@ -164,11 +165,16 @@ public final class RangeParser {
   private String normalizeInput(String rangeString) {
     String trimmed = rangeString.trim();
     if (trimmed.isEmpty()) {
-      throw new RangeParseException("Range string cannot be empty", rangeString, 0);
+      throw new RangeParseException("Range string cannot be empty", rangeString, -1);
     }
 
-    if (lenient && !trimmed.startsWith("[") && !trimmed.startsWith("(")) {
-      return "[" + trimmed + ")";
+    if (lenient) {
+      boolean hasOpeningBracket = trimmed.startsWith("[") || trimmed.startsWith("(");
+      boolean hasClosingBracket = trimmed.endsWith("]") || trimmed.endsWith(")");
+
+      if (!hasOpeningBracket && !hasClosingBracket) {
+        return "[" + trimmed + ")";
+      }
     }
 
     return trimmed;
@@ -182,7 +188,11 @@ public final class RangeParser {
    * @return parsed range parts
    */
   private RangeParts extractRangeParts(String normalized, String original) {
-    validateFormat(normalized, original);
+    int trimOffset = original.length() - original.stripLeading().length();
+    boolean lenientWrapped = normalized.length() != original.trim().length();
+    int bracketOffset = lenientWrapped ? 0 : 1;
+
+    validateFormat(normalized, original, trimOffset);
 
     char openingBracket = normalized.charAt(0);
     char closingBracket = normalized.charAt(normalized.length() - 1);
@@ -190,14 +200,22 @@ public final class RangeParser {
     String content = normalized.substring(1, normalized.length() - 1);
     int separatorIndex = content.indexOf(SEPARATOR);
     if (separatorIndex == -1) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, trimOffset + bracketOffset);
     }
 
-    String lowerPart = content.substring(0, separatorIndex).trim();
-    String upperPart = content.substring(separatorIndex + SEPARATOR.length()).trim();
+    String lowerRaw = content.substring(0, separatorIndex);
+    String upperRaw = content.substring(separatorIndex + SEPARATOR.length());
+    String lowerPart = lowerRaw.trim();
+    String upperPart = upperRaw.trim();
 
-    if (lowerPart.isEmpty() || upperPart.isEmpty()) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+    if (lowerPart.isEmpty()) {
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, trimOffset + bracketOffset);
+    }
+    if (upperPart.isEmpty()) {
+      throw new RangeParseException(
+          INVALID_FORMAT_MESSAGE,
+          original,
+          trimOffset + bracketOffset + separatorIndex + SEPARATOR.length());
     }
 
     BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
@@ -206,22 +224,43 @@ public final class RangeParser {
     boolean lowerUnbounded = NEGATIVE_INFINITY.contains(lowerPart);
     boolean upperUnbounded = POSITIVE_INFINITY.contains(upperPart);
 
+    // Compute positions of trimmed values within the original string
+    int lowerLeadingSpaces = lowerRaw.length() - lowerRaw.stripLeading().length();
+    int upperLeadingSpaces = upperRaw.length() - upperRaw.stripLeading().length();
+    int openBracketPos = lenientWrapped ? -1 : trimOffset;
+    int closeBracketPos = lenientWrapped ? -1 : trimOffset + normalized.length() - 1;
+    int lowerPartPos = trimOffset + bracketOffset + lowerLeadingSpaces;
+    int upperPartPos =
+        trimOffset + bracketOffset + separatorIndex + SEPARATOR.length() + upperLeadingSpaces;
+
     return new RangeParts(
-        lowerPart, upperPart, lowerBoundType, upperBoundType, lowerUnbounded, upperUnbounded);
+        lowerPart,
+        upperPart,
+        lowerBoundType,
+        upperBoundType,
+        lowerUnbounded,
+        upperUnbounded,
+        openBracketPos,
+        closeBracketPos,
+        lowerPartPos,
+        upperPartPos);
   }
 
   /** Validates the basic format of the range string (brackets and length). */
-  private void validateFormat(String normalized, String original) {
+  private void validateFormat(String normalized, String original, int trimOffset) {
     if (normalized.length() < 6) { // Minimum: "[a..b]"
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, -1);
     }
 
     char openingBracket = normalized.charAt(0);
     char closingBracket = normalized.charAt(normalized.length() - 1);
 
-    if ((openingBracket != '[' && openingBracket != '(')
-        || (closingBracket != ']' && closingBracket != ')')) {
-      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, 0);
+    boolean badOpening = openingBracket != '[' && openingBracket != '(';
+    boolean badClosing = closingBracket != ']' && closingBracket != ')';
+
+    if (badOpening || badClosing) {
+      int pos = badOpening ? trimOffset : trimOffset + normalized.length() - 1;
+      throw new RangeParseException(INVALID_FORMAT_MESSAGE, original, pos);
     }
   }
 
@@ -229,11 +268,15 @@ public final class RangeParser {
   private void validateInfinityBounds(RangeParts parts, String rangeString) {
     if (parts.lowerUnbounded() && parts.lowerBoundType() == BoundType.CLOSED) {
       throw new RangeParseException(
-          "Invalid range: negative infinity bound must be open '(' not closed '['", rangeString, 0);
+          "Invalid range: negative infinity bound must be open '(' not closed '['",
+          rangeString,
+          parts.openBracketPos());
     }
     if (parts.upperUnbounded() && parts.upperBoundType() == BoundType.CLOSED) {
       throw new RangeParseException(
-          "Invalid range: positive infinity bound must be open ')' not closed ']'", rangeString, 0);
+          "Invalid range: positive infinity bound must be open ')' not closed ']'",
+          rangeString,
+          parts.closeBracketPos());
     }
   }
 
@@ -244,37 +287,41 @@ public final class RangeParser {
     TypeAdapter<T> adapter = (TypeAdapter<T>) typeAdapters.get(elementType);
     if (adapter == null) {
       throw new RangeParseException(
-          "No type adapter registered for: " + elementType.getName(), rangeString, 0);
+          "No type adapter registered for: " + elementType.getName(), rangeString, -1);
     }
     return adapter;
   }
 
   @SuppressWarnings("unchecked")
   private <T extends Comparable<?>> Range<T> buildRange(
-      String lowerPart,
-      String upperPart,
-      BoundType lowerBoundType,
-      BoundType upperBoundType,
-      boolean lowerUnbounded,
-      boolean upperUnbounded,
-      TypeAdapter<T> adapter) {
+      RangeParts parts, TypeAdapter<T> adapter, String originalInput) {
 
-    if (lowerUnbounded && upperUnbounded) {
+    if (parts.lowerUnbounded() && parts.upperUnbounded()) {
       return Range.all();
     }
 
-    if (lowerUnbounded) {
-      T upper = parseAndValidate(adapter, upperPart, "upper");
-      return upperBoundType == BoundType.CLOSED ? Range.atMost(upper) : Range.lessThan(upper);
+    if (parts.lowerUnbounded()) {
+      T upper =
+          parseAndValidate(
+              adapter, parts.upperPart(), "upper", originalInput, parts.upperPartPos());
+      return parts.upperBoundType() == BoundType.CLOSED
+          ? Range.atMost(upper)
+          : Range.lessThan(upper);
     }
 
-    if (upperUnbounded) {
-      T lower = parseAndValidate(adapter, lowerPart, "lower");
-      return lowerBoundType == BoundType.CLOSED ? Range.atLeast(lower) : Range.greaterThan(lower);
+    if (parts.upperUnbounded()) {
+      T lower =
+          parseAndValidate(
+              adapter, parts.lowerPart(), "lower", originalInput, parts.lowerPartPos());
+      return parts.lowerBoundType() == BoundType.CLOSED
+          ? Range.atLeast(lower)
+          : Range.greaterThan(lower);
     }
 
-    T lower = parseAndValidate(adapter, lowerPart, "lower");
-    T upper = parseAndValidate(adapter, upperPart, "upper");
+    T lower =
+        parseAndValidate(adapter, parts.lowerPart(), "lower", originalInput, parts.lowerPartPos());
+    T upper =
+        parseAndValidate(adapter, parts.upperPart(), "upper", originalInput, parts.upperPartPos());
 
     // Validate lower <= upper (compare using Comparable)
     @SuppressWarnings("unchecked")
@@ -282,22 +329,22 @@ public final class RangeParser {
     if (comparableLower.compareTo(upper) > 0) {
       throw new RangeParseException(
           "Invalid range: lower bound ("
-              + lowerPart
+              + parts.lowerPart()
               + ") is greater than upper bound ("
-              + upperPart
+              + parts.upperPart()
               + ")",
-          lowerPart + ".." + upperPart,
-          0);
+          originalInput,
+          parts.lowerPartPos());
     }
 
-    return switch (lowerBoundType) {
+    return switch (parts.lowerBoundType()) {
       case CLOSED ->
-          switch (upperBoundType) {
+          switch (parts.upperBoundType()) {
             case CLOSED -> Range.closed(lower, upper);
             case OPEN -> Range.closedOpen(lower, upper);
           };
       case OPEN ->
-          switch (upperBoundType) {
+          switch (parts.upperBoundType()) {
             case CLOSED -> Range.openClosed(lower, upper);
             case OPEN -> Range.open(lower, upper);
           };
@@ -305,11 +352,14 @@ public final class RangeParser {
   }
 
   /** Parses a value using the adapter and validates the result is not null. */
-  private <T> T parseAndValidate(TypeAdapter<T> adapter, String value, String boundName) {
+  private <T> T parseAndValidate(
+      TypeAdapter<T> adapter, String value, String boundName, String originalInput, int valuePos) {
     T result = adapter.parse(value);
     if (result == null) {
       throw new RangeParseException(
-          "TypeAdapter returned null for " + boundName + " bound value: " + value, value, 0);
+          "TypeAdapter returned null for " + boundName + " bound value: " + value,
+          originalInput,
+          valuePos);
     }
     return result;
   }

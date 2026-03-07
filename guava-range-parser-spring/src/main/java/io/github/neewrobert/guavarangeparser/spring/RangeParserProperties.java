@@ -1,9 +1,11 @@
 package io.github.neewrobert.guavarangeparser.spring;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 /**
  * Configuration properties for the Guava Range parser.
+ *
+ * <p>Bound manually via {@link org.springframework.boot.context.properties.bind.Binder} in {@link
+ * RangeConverterAutoConfiguration} to avoid a circular dependency with the converter, which is
+ * needed by the configuration properties binding system itself.
  *
  * <p>Example configuration:
  *
@@ -13,7 +15,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @see RangeConverterAutoConfiguration
  */
-@ConfigurationProperties(prefix = "guava.range-parser")
 public class RangeParserProperties {
 
   /**

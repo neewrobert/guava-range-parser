@@ -428,6 +428,38 @@ class RangeParserTest {
       Range<Integer> range = parser.parseRange("(0..100)", Integer.class);
       assertThat(range).isEqualTo(Range.open(0, 100));
     }
+
+    @Test
+    void lenientModeRejectsPartialOpeningBracketOnly() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThatThrownBy(() -> parser.parseRange("[5..10", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void lenientModeRejectsPartialClosingBracketOnly() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThatThrownBy(() -> parser.parseRange("5..10]", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void lenientModeRejectsPartialOpeningParenthesisOnly() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThatThrownBy(() -> parser.parseRange("(5..10", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
+
+    @Test
+    void lenientModeRejectsPartialClosingParenthesisOnly() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThatThrownBy(() -> parser.parseRange("5..10)", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("Invalid range format");
+    }
   }
 
   @Nested
@@ -649,11 +681,21 @@ class RangeParserTest {
     }
 
     @Test
-    void exceptionWithZeroPositionDoesNotShowCaret() {
-      // When position is 0, no caret should be shown
+    void exceptionWithZeroPositionShowsCaretAtFirstChar() {
+      // Position 0 points at the first character of input
       RangeParseException ex = new RangeParseException("Error", "input", 0);
       String message = ex.getMessage();
+      assertThat(message).contains("^");
+      assertThat(ex.getPosition()).isEqualTo(0);
+    }
+
+    @Test
+    void exceptionWithNegativePositionDoesNotShowCaret() {
+      // Position -1 means no specific position; no caret should be shown
+      RangeParseException ex = new RangeParseException("Error", "input", -1);
+      String message = ex.getMessage();
       assertThat(message).doesNotContain("^");
+      assertThat(ex.getPosition()).isEqualTo(-1);
     }
 
     @Test

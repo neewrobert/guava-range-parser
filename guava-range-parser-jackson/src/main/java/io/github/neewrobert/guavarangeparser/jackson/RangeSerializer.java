@@ -22,10 +22,9 @@ class RangeSerializer extends JsonSerializer<Range<?>> {
   }
 
   @Override
-  @SuppressWarnings({"rawtypes", "unchecked"})
   public void serialize(Range<?> value, JsonGenerator gen, SerializerProvider serializers)
       throws IOException {
-    gen.writeString(formatter.format((Range) value));
+    gen.writeString(formatter.format(value));
   }
 
   @Override

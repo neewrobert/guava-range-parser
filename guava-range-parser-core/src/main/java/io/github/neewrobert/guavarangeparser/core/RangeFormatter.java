@@ -58,7 +58,7 @@ public final class RangeFormatter {
    * @param <T> the type of the range elements
    * @return the string notation
    */
-  public static <T extends Comparable<T>> String toString(Range<T> range) {
+  public static <T extends Comparable<?>> String toString(Range<T> range) {
     return DEFAULT_INSTANCE.format(range);
   }
 
@@ -69,7 +69,7 @@ public final class RangeFormatter {
    * @param <T> the type of the range elements
    * @return the string notation
    */
-  public <T extends Comparable<T>> String format(Range<T> range) {
+  public <T extends Comparable<?>> String format(Range<T> range) {
     requireNonNull(range, "range must not be null");
 
     StringBuilder sb = new StringBuilder();
