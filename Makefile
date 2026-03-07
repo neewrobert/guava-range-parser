@@ -4,6 +4,7 @@
 
 .PHONY: help build clean test coverage run-examples install \
         format format-check security pitest errorprone sortpom sortpom-check \
+        benchmark benchmark-quick benchmark-save benchmark-compare \
         version-get version-set release release-check
 
 # Default target
@@ -29,6 +30,13 @@ help:
 	@echo "    make errorprone     - Run Error Prone static analysis"
 	@echo "    make sortpom        - Sort pom.xml files"
 	@echo "    make sortpom-check  - Verify pom.xml sorting (CI)"
+	@echo ""
+	@echo "  Benchmarks:"
+	@echo "    make benchmark         - Run all JMH benchmarks (full run, ~10 min)"
+	@echo "    make benchmark-quick   - Run benchmarks with fewer iterations (~2 min)"
+	@echo "    make benchmark-save    - Save latest results as a versioned baseline"
+	@echo "    make benchmark-compare - Compare latest results against saved baseline"
+	@echo "    (benchmark-save and benchmark-compare require python3)"
 	@echo ""
 	@echo "  Security:"
 	@echo "    make security       - Run OWASP Dependency-Check (requires NVD_API_KEY)"
@@ -98,6 +106,49 @@ sortpom:
 
 sortpom-check:
 	mvn validate -Psortpom
+
+# =============================================================================
+# Benchmarks
+# =============================================================================
+
+benchmark:
+	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar \
+		-rf json -rff guava-range-parser-benchmarks/results/latest.json
+	@echo ""
+	@echo "Results saved to guava-range-parser-benchmarks/results/latest.json"
+
+benchmark-quick:
+	mvn package -pl guava-range-parser-benchmarks -am -q -DskipTests
+	java -jar guava-range-parser-benchmarks/target/benchmarks.jar -wi 1 -i 3 -f 1 -t 1 \
+		-rf json -rff guava-range-parser-benchmarks/results/latest.json
+	@echo ""
+	@echo "Results saved to guava-range-parser-benchmarks/results/latest.json (quick mode)."
+
+benchmark-save:
+	@if [ ! -f guava-range-parser-benchmarks/results/latest.json ]; then \
+		echo "No results to save. Run 'make benchmark' first."; \
+		exit 1; \
+	fi
+	@VERSION=$$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); \
+	python3 guava-range-parser-benchmarks/scripts/sanitize.py \
+		guava-range-parser-benchmarks/results/latest.json \
+		"guava-range-parser-benchmarks/results/baseline-$$VERSION.json"
+
+benchmark-compare:
+	@if [ ! -f guava-range-parser-benchmarks/results/latest.json ]; then \
+		echo "No latest results. Run 'make benchmark' first."; \
+		exit 1; \
+	fi
+	@BASELINE=$$(ls -t guava-range-parser-benchmarks/results/baseline-*.json 2>/dev/null | head -1); \
+	if [ -z "$$BASELINE" ]; then \
+		echo "No baseline found. Run 'make benchmark-save' to save one."; \
+		exit 1; \
+	fi; \
+	echo "Comparing latest vs $$BASELINE"; \
+	echo ""; \
+	python3 guava-range-parser-benchmarks/scripts/compare.py \
+		"$$BASELINE" guava-range-parser-benchmarks/results/latest.json
 
 # =============================================================================
 # Security

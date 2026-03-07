@@ -28,6 +28,7 @@
     </developers>
 
     <modules>
+        <module>guava-range-parser-benchmarks</module>
         <module>guava-range-parser-bom</module>
         <module>guava-range-parser-core</module>
         <module>guava-range-parser-examples</module>

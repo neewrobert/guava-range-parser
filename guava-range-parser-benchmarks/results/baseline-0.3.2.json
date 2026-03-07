@@ -1,0 +1,437 @@
+[
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatDoubleClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 6.686068210205038,
+      "scoreError": 0.3780715952642499,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatDurationClosedOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 31.09801585518968,
+      "scoreError": 0.55585241886621,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerAll",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 36.25593975304705,
+      "scoreError": 1.7220628805280347,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerAtLeast",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 26.81705035095369,
+      "scoreError": 3.0820700050701486,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerAtMost",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 17.14466554961482,
+      "scoreError": 2.051658486716427,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 31.436941080764978,
+      "scoreError": 1.6581222091744763,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerClosedOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 32.34708024551962,
+      "scoreError": 2.084304460765533,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatIntegerOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 34.292890591245836,
+      "scoreError": 2.5830686491151775,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatLocalDateClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 8.203194030106115,
+      "scoreError": 0.16861834064853246,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatLongClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.770550816174172,
+      "scoreError": 7.3613592611157115,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatNegativeNumbers",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 27.407043170277497,
+      "scoreError": 9.931855248775333,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatStaticMethod",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 39.34602907237409,
+      "scoreError": 0.20101931919642493,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeFormatterBenchmark.formatStringClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 23.196516370546,
+      "scoreError": 1.8041251332207469,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseDoubleClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 16.425281182147245,
+      "scoreError": 0.07088078431455244,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseDurationClosedOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 3.239986785599632,
+      "scoreError": 0.10763750767352745,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerAll",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 13.343234693524565,
+      "scoreError": 2.620170624622563,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerAtLeast",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 6.762271650985322,
+      "scoreError": 1.551845028467163,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerAtMost",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 5.465033533161793,
+      "scoreError": 0.5770267863264108,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.158553744985973,
+      "scoreError": 0.23738954581434277,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerClosedOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.727545658381302,
+      "scoreError": 0.8754044767365883,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseIntegerOpen",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.23266817963733,
+      "scoreError": 0.27334526415546617,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseLenientBracketless",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 18.659109981492083,
+      "scoreError": 0.10809271552042687,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseLenientWithBrackets",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.22627133038221,
+      "scoreError": 0.1703643065601722,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseLocalDateClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 3.1715464357456797,
+      "scoreError": 0.06637947838952274,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseLongClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 19.90046049151233,
+      "scoreError": 0.3835673315696591,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseNegativeNumbers",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 15.408153925669549,
+      "scoreError": 7.086432024727676,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseStaticMethod",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 21.635462851623142,
+      "scoreError": 0.048119942414299025,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseStringClosed",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 28.553484235003076,
+      "scoreError": 0.2593678685745297,
+      "scoreUnit": "ops/us"
+    }
+  },
+  {
+    "benchmark": "io.github.neewrobert.guavarangeparser.benchmarks.RangeParserBenchmark.parseWithWhitespace",
+    "mode": "thrpt",
+    "threads": 1,
+    "forks": 2,
+    "measurementIterations": 5,
+    "measurementTime": "2 s",
+    "warmupIterations": 3,
+    "warmupTime": "2 s",
+    "primaryMetric": {
+      "score": 5.000784629689477,
+      "scoreError": 0.914269023382489,
+      "scoreUnit": "ops/us"
+    }
+  }
+]

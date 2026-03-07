@@ -13,15 +13,15 @@ Thanks for your interest in contributing! This document provides guidelines to m
 **Requirements:**
 - Java 17+
 - Maven 3.8+
+- Python 3 (only for benchmark comparison scripts)
 
-**Build and test:**
+**Common commands** (run `make help` for the full list):
 ```bash
-mvn clean verify
-```
-
-**Format code:**
-```bash
-mvn fmt:format
+make build          # Compile
+make test           # Run tests
+make format         # Format code with google-java-format
+make coverage       # Run tests with JaCoCo coverage report
+make benchmark-quick # Quick performance check (~2 min)
 ```
 
 ## Making Changes
@@ -52,6 +52,36 @@ Add support for BigInteger ranges
 BigInteger is commonly used for arbitrary-precision integers.
 This adds a built-in TypeAdapter for parsing BigInteger values.
 ```
+
+### Benchmarks
+
+We use [JMH](https://github.com/openjdk/jmh) to track performance. You should run benchmarks when your changes touch parsing or formatting logic (e.g., `RangeParser`, `RangeFormatter`, `TypeAdapter`, `BuiltInTypeAdapters`).
+
+**When to run:**
+- Before and after changes to parsing/formatting code
+- When adding new type adapters (to verify they don't regress existing performance)
+- Not needed for documentation, test-only, or dependency-update changes
+
+**Quick check (~2 min):**
+```bash
+make benchmark-quick
+```
+
+**Full run (~10 min, more reliable):**
+```bash
+make benchmark
+```
+
+**Compare against baseline:**
+```bash
+make benchmark-compare
+```
+
+This shows a table comparing your results against the last saved baseline. Changes over ±10% are flagged. If you see a regression, investigate before submitting your PR.
+
+> Note: `benchmark-save` and `benchmark-compare` require `python3`.
+
+You don't need to update the baseline file — maintainers will do that at release time.
 
 ## Pull Request Process
 
