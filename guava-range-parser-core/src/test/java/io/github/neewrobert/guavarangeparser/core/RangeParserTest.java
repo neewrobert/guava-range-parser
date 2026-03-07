@@ -7,6 +7,11 @@ import com.google.common.collect.Range;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.MonthDay;
+import java.time.OffsetTime;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -357,6 +362,134 @@ class RangeParserTest {
     @Test
     void parseAll() {
       Range<LocalDate> range = RangeParser.parse("(-∞..+∞)", LocalDate.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+  }
+
+  @Nested
+  class OffsetTimeRanges {
+
+    @Test
+    void parseClosed() {
+      Range<OffsetTime> range =
+          RangeParser.parse("[10:00:00+02:00..18:00:00+02:00]", OffsetTime.class);
+      assertThat(range)
+          .isEqualTo(
+              Range.closed(
+                  OffsetTime.of(10, 0, 0, 0, ZoneOffset.ofHours(2)),
+                  OffsetTime.of(18, 0, 0, 0, ZoneOffset.ofHours(2))));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<OffsetTime> range =
+          RangeParser.parse("[09:00:00+00:00..17:00:00+00:00)", OffsetTime.class);
+      assertThat(range)
+          .isEqualTo(
+              Range.closedOpen(
+                  OffsetTime.of(9, 0, 0, 0, ZoneOffset.UTC),
+                  OffsetTime.of(17, 0, 0, 0, ZoneOffset.UTC)));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<OffsetTime> range = RangeParser.parse("[08:00:00+00:00..+∞)", OffsetTime.class);
+      assertThat(range).isEqualTo(Range.atLeast(OffsetTime.of(8, 0, 0, 0, ZoneOffset.UTC)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<OffsetTime> range = RangeParser.parse("(-∞..+∞)", OffsetTime.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+  }
+
+  @Nested
+  class YearRanges {
+
+    @Test
+    void parseClosed() {
+      Range<Year> range = RangeParser.parse("[2020..2030]", Year.class);
+      assertThat(range).isEqualTo(Range.closed(Year.of(2020), Year.of(2030)));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<Year> range = RangeParser.parse("[2020..2030)", Year.class);
+      assertThat(range).isEqualTo(Range.closedOpen(Year.of(2020), Year.of(2030)));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<Year> range = RangeParser.parse("[2024..+∞)", Year.class);
+      assertThat(range).isEqualTo(Range.atLeast(Year.of(2024)));
+    }
+
+    @Test
+    void parseAtMost() {
+      Range<Year> range = RangeParser.parse("(-∞..2030]", Year.class);
+      assertThat(range).isEqualTo(Range.atMost(Year.of(2030)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<Year> range = RangeParser.parse("(-∞..+∞)", Year.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+  }
+
+  @Nested
+  class YearMonthRanges {
+
+    @Test
+    void parseClosed() {
+      Range<YearMonth> range = RangeParser.parse("[2024-01..2024-12]", YearMonth.class);
+      assertThat(range).isEqualTo(Range.closed(YearMonth.of(2024, 1), YearMonth.of(2024, 12)));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<YearMonth> range = RangeParser.parse("[2024-01..2025-01)", YearMonth.class);
+      assertThat(range).isEqualTo(Range.closedOpen(YearMonth.of(2024, 1), YearMonth.of(2025, 1)));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<YearMonth> range = RangeParser.parse("[2024-06..+∞)", YearMonth.class);
+      assertThat(range).isEqualTo(Range.atLeast(YearMonth.of(2024, 6)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<YearMonth> range = RangeParser.parse("(-∞..+∞)", YearMonth.class);
+      assertThat(range).isEqualTo(Range.all());
+    }
+  }
+
+  @Nested
+  class MonthDayRanges {
+
+    @Test
+    void parseClosed() {
+      Range<MonthDay> range = RangeParser.parse("[--01-01..--12-31]", MonthDay.class);
+      assertThat(range).isEqualTo(Range.closed(MonthDay.of(1, 1), MonthDay.of(12, 31)));
+    }
+
+    @Test
+    void parseClosedOpen() {
+      Range<MonthDay> range = RangeParser.parse("[--03-01..--06-01)", MonthDay.class);
+      assertThat(range).isEqualTo(Range.closedOpen(MonthDay.of(3, 1), MonthDay.of(6, 1)));
+    }
+
+    @Test
+    void parseAtLeast() {
+      Range<MonthDay> range = RangeParser.parse("[--06-01..+∞)", MonthDay.class);
+      assertThat(range).isEqualTo(Range.atLeast(MonthDay.of(6, 1)));
+    }
+
+    @Test
+    void parseAll() {
+      Range<MonthDay> range = RangeParser.parse("(-∞..+∞)", MonthDay.class);
       assertThat(range).isEqualTo(Range.all());
     }
   }

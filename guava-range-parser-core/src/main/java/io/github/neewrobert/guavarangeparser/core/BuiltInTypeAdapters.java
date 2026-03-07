@@ -7,7 +7,11 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
@@ -19,7 +23,7 @@ import java.util.Map;
  * <ul>
  *   <li>Numeric types: Integer, Long, Short, Byte, Double, Float, BigInteger, BigDecimal
  *   <li>Temporal types: Duration, Instant, LocalDate, LocalDateTime, LocalTime, ZonedDateTime,
- *       OffsetDateTime
+ *       OffsetDateTime, OffsetTime, Year, YearMonth, MonthDay
  *   <li>Other types: String, Character
  * </ul>
  *
@@ -46,6 +50,10 @@ public final class BuiltInTypeAdapters {
   public static final TypeAdapter<LocalTime> LOCAL_TIME = LocalTime::parse;
   public static final TypeAdapter<ZonedDateTime> ZONED_DATE_TIME = ZonedDateTime::parse;
   public static final TypeAdapter<OffsetDateTime> OFFSET_DATE_TIME = OffsetDateTime::parse;
+  public static final TypeAdapter<OffsetTime> OFFSET_TIME = OffsetTime::parse;
+  public static final TypeAdapter<Year> YEAR = Year::parse;
+  public static final TypeAdapter<YearMonth> YEAR_MONTH = YearMonth::parse;
+  public static final TypeAdapter<MonthDay> MONTH_DAY = MonthDay::parse;
 
   public static final TypeAdapter<String> STRING = s -> s;
   public static final TypeAdapter<Character> CHARACTER =
@@ -84,6 +92,10 @@ public final class BuiltInTypeAdapters {
     adapters.put(LocalTime.class, LOCAL_TIME);
     adapters.put(ZonedDateTime.class, ZONED_DATE_TIME);
     adapters.put(OffsetDateTime.class, OFFSET_DATE_TIME);
+    adapters.put(OffsetTime.class, OFFSET_TIME);
+    adapters.put(Year.class, YEAR);
+    adapters.put(YearMonth.class, YEAR_MONTH);
+    adapters.put(MonthDay.class, MONTH_DAY);
 
     adapters.put(String.class, STRING);
     adapters.put(Character.class, CHARACTER);
