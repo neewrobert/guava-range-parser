@@ -36,6 +36,7 @@ help:
 	@echo "    make benchmark-quick   - Run benchmarks with fewer iterations (~2 min)"
 	@echo "    make benchmark-save    - Save latest results as a versioned baseline"
 	@echo "    make benchmark-compare - Compare latest results against saved baseline"
+	@echo "    (benchmark-save and benchmark-compare require python3)"
 	@echo ""
 	@echo "  Security:"
 	@echo "    make security       - Run OWASP Dependency-Check (requires NVD_API_KEY)"
@@ -130,9 +131,9 @@ benchmark-save:
 		exit 1; \
 	fi
 	@VERSION=$$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout); \
-	cp guava-range-parser-benchmarks/results/latest.json \
-		"guava-range-parser-benchmarks/results/baseline-$$VERSION.json"; \
-	echo "Saved baseline as guava-range-parser-benchmarks/results/baseline-$$VERSION.json"
+	python3 guava-range-parser-benchmarks/scripts/sanitize.py \
+		guava-range-parser-benchmarks/results/latest.json \
+		"guava-range-parser-benchmarks/results/baseline-$$VERSION.json"
 
 benchmark-compare:
 	@if [ ! -f guava-range-parser-benchmarks/results/latest.json ]; then \
@@ -146,18 +147,8 @@ benchmark-compare:
 	fi; \
 	echo "Comparing latest vs $$BASELINE"; \
 	echo ""; \
-	echo "Benchmark                                          | Baseline   | Latest     | Change"; \
-	echo "---------------------------------------------------|------------|------------|--------"; \
-	python3 -c " \
-import json, sys; \
-b = {r['benchmark'].split('.')[-1]: r['primaryMetric']['score'] for r in json.load(open('$$BASELINE'))}; \
-l = {r['benchmark'].split('.')[-1]: r['primaryMetric']['score'] for r in json.load(open('guava-range-parser-benchmarks/results/latest.json'))}; \
-for name in sorted(set(b) | set(l)): \
-    bs, ls = b.get(name, 0), l.get(name, 0); \
-    pct = ((ls - bs) / bs * 100) if bs else 0; \
-    flag = '!!!' if abs(pct) > 10 else ''; \
-    print(f'{name:<51}| {bs:>9.3f}  | {ls:>9.3f}  | {pct:>+6.1f}% {flag}') \
-"
+	python3 guava-range-parser-benchmarks/scripts/compare.py \
+		"$$BASELINE" guava-range-parser-benchmarks/results/latest.json
 
 # =============================================================================
 # Security
