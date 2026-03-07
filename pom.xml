@@ -53,7 +53,7 @@
         <central-publishing-maven-plugin.version>1.1.1</central-publishing-maven-plugin.version>
 
         <!-- Security scanning -->
-        <dependency-check-maven.version>11.1.1</dependency-check-maven.version>
+        <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
         <error-prone-support.version>0.28.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
