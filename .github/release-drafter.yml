@@ -1,0 +1,69 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+categories:
+  - title: 'Bug Fixes'
+    labels:
+      - 'bug'
+  - title: 'New Features & Enhancements'
+    labels:
+      - 'enhancement'
+  - title: 'Refactoring'
+    labels:
+      - 'refactor'
+  - title: 'Documentation'
+    labels:
+      - 'documentation'
+  - title: 'Dependencies'
+    labels:
+      - 'dependencies'
+      - 'maven'
+      - 'github-actions'
+
+change-template: '- $TITLE (#$NUMBER) @$AUTHOR'
+change-title-escapes: '\<*_&'
+
+version-resolver:
+  major:
+    labels:
+      - 'breaking'
+  minor:
+    labels:
+      - 'enhancement'
+  patch:
+    labels:
+      - 'bug'
+      - 'dependencies'
+      - 'refactor'
+      - 'documentation'
+  default: patch
+
+autolabeler:
+  - label: 'documentation'
+    files:
+      - '*.md'
+      - 'docs/**'
+    title:
+      - '/^docs?:/i'
+  - label: 'bug'
+    title:
+      - '/^fix:/i'
+  - label: 'enhancement'
+    title:
+      - '/^feat:/i'
+  - label: 'refactor'
+    title:
+      - '/^refactor:/i'
+  - label: 'dependencies'
+    title:
+      - '/^(chore\(deps\)|build\(deps\)|bump)/i'
+
+exclude-labels:
+  - 'skip-changelog'
+
+template: |
+  ## What's Changed
+
+  $CHANGES
+
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
