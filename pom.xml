@@ -94,7 +94,7 @@
 
         <!-- POM sorting -->
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-        <spring-boot.version>3.5.10</spring-boot.version>
+        <spring-boot.version>4.0.3</spring-boot.version>
     </properties>
 
     <dependencyManagement>
