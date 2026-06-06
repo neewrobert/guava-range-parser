@@ -284,8 +284,7 @@
                         <!-- NVD API settings -->
                         <nvdMaxRetryCount>3</nvdMaxRetryCount>
                         <nvdApiDelay>5000</nvdApiDelay>
-                        <!-- Don't fail if NVD is temporarily unavailable -->
-                        <failOnError>false</failOnError>
+                        <failOnError>true</failOnError>
                         <formats>
                             <format>HTML</format>
                             <format>JSON</format>
