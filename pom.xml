@@ -51,28 +51,29 @@
 
     <properties>
         <assertj.version>3.27.7</assertj.version>
-        <central-publishing-maven-plugin.version>1.1.1</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>1.2.0</central-publishing-maven-plugin.version>
 
         <!-- Security scanning -->
-        <dependency-check-maven.version>12.2.0</dependency-check-maven.version>
-        <error-prone-support.version>0.28.0</error-prone-support.version>
+        <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
+        <error-prone-support.version>0.29.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
-        <error-prone.version>2.47.0</error-prone.version>
+        <error-prone.version>2.49.0</error-prone.version>
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
 
         <!-- Dependency versions -->
-        <guava.version>33.5.0-jre</guava.version>
-        <jackson.version>2.21.1</jackson.version>
+        <guava.version>33.6.0-jre</guava.version>
+        <jackson.version>2.22.0</jackson.version>
 
         <!-- Code coverage -->
         <jacoco.version>0.8.14</jacoco.version>
 
         <!-- Test dependency versions -->
-        <jqwik.version>1.9.3</jqwik.version>
-        <junit-jupiter.version>6.0.3</junit-jupiter.version>
+        <jqwik.version>1.10.1</jqwik.version>
+        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <log4j2.version>2.26.0</log4j2.version>
 
         <!-- Plugin versions -->
         <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
@@ -82,19 +83,20 @@
         <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
-        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
         <maven.compiler.release>17</maven.compiler.release>
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Pitest mutation testing -->
-        <pitest.version>1.22.1</pitest.version>
+        <pitest.version>1.25.3</pitest.version>
         <!-- Build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- POM sorting -->
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-        <spring-boot.version>3.5.10</spring-boot.version>
+        <spring-boot.version>4.0.3</spring-boot.version>
+        <spring-framework.version>7.0.7</spring-framework.version>
     </properties>
 
     <dependencyManagement>
@@ -109,7 +111,25 @@
                 <scope>import</scope>
             </dependency>
 
-            <!-- Spring -->
+            <!-- Log4j BOM - override Spring Boot managed version to fix CVE-2026-34479, CVE-2026-34477 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Framework BOM - override Spring Boot managed version to fix CVE-2026-22740, CVE-2026-22737, CVE-2026-22745, CVE-2026-22741, CVE-2026-22735 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring Boot -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -188,6 +208,17 @@
                     <configuration>
                         <style>google</style>
                         <verbose>false</verbose>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.github.mavenplugins</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -284,8 +315,7 @@
                         <!-- NVD API settings -->
                         <nvdMaxRetryCount>3</nvdMaxRetryCount>
                         <nvdApiDelay>5000</nvdApiDelay>
-                        <!-- Don't fail if NVD is temporarily unavailable -->
-                        <failOnError>false</failOnError>
+                        <failOnError>true</failOnError>
                         <formats>
                             <format>HTML</format>
                             <format>JSON</format>
@@ -322,17 +352,6 @@
                         </dependency>
                     </dependencies>
                 </plugin>
-                <plugin>
-                    <groupId>io.github.mavenplugins</groupId>
-                    <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>${central-publishing-maven-plugin.version}</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <publishingServerId>central</publishingServerId>
-                        <autoPublish>true</autoPublish>
-                        <waitUntil>published</waitUntil>
-                    </configuration>
-                </plugin>
                 <!-- Note: Run with MAVEN_OPTS if needed for JDK 17+:
                      export MAVEN_OPTS="-\-add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
                      -\-add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED
@@ -343,6 +362,10 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>io.github.mavenplugins</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -362,10 +385,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>io.github.mavenplugins</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -23,6 +23,21 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Override Spring Boot managed versions to fix CVEs -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Import Spring Boot BOM for dependency management -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
