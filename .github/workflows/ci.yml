@@ -128,6 +128,13 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Cache NVD database
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check/
+          key: nvd-db-${{ github.run_id }}
+          restore-keys: nvd-db-
+
       - name: Run OWASP Dependency-Check
         run: mvn verify -Pdev,security -DskipTests "-DnvdApiKey=$NVD_API_KEY"
 
