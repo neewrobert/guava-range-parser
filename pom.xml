@@ -314,7 +314,7 @@
                         <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
                         <!-- NVD API settings -->
                         <nvdMaxRetryCount>3</nvdMaxRetryCount>
-                        <nvdApiDelay>5000</nvdApiDelay>
+                        <nvdApiDelay>1000</nvdApiDelay>
                         <failOnError>true</failOnError>
                         <formats>
                             <format>HTML</format>
