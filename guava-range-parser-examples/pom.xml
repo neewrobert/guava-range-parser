@@ -97,7 +97,7 @@
                 <groupId>io.github.mavenplugins</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
                 <configuration>
-                    <skipBundling>true</skipBundling>
+                    <skipPublishing>true</skipPublishing>
                 </configuration>
             </plugin>
             <plugin>
