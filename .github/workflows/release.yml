@@ -36,7 +36,9 @@ jobs:
 
       - name: Set release version (manual)
         if: github.event_name == 'workflow_dispatch'
-        run: mvn versions:set -DnewVersion=${{ github.event.inputs.version }} -DgenerateBackupPoms=false
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+        run: mvn versions:set -DnewVersion="$RELEASE_VERSION" -DgenerateBackupPoms=false
 
       - name: Set release version (tag)
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
