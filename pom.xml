@@ -95,8 +95,7 @@
 
         <!-- POM sorting -->
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-        <spring-boot.version>4.0.6</spring-boot.version>
-        <spring-framework.version>7.0.7</spring-framework.version>
+        <spring-boot.version>4.0.7</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -116,15 +115,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-bom</artifactId>
                 <version>${log4j2.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- Spring Framework BOM - override Spring Boot managed version to fix CVE-2026-22740, CVE-2026-22737, CVE-2026-22745, CVE-2026-22741, CVE-2026-22735 -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-framework-bom</artifactId>
-                <version>${spring-framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
