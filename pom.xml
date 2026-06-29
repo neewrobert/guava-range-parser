@@ -51,14 +51,14 @@
 
     <properties>
         <assertj.version>3.27.7</assertj.version>
-        <central-publishing-maven-plugin.version>1.2.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>1.3.0</central-publishing-maven-plugin.version>
 
         <!-- Security scanning -->
         <dependency-check-maven.version>12.2.2</dependency-check-maven.version>
         <error-prone-support.version>0.29.0</error-prone-support.version>
 
         <!-- Error Prone versions -->
-        <error-prone.version>2.49.0</error-prone.version>
+        <error-prone.version>2.50.0</error-prone.version>
 
         <!-- Code formatting -->
         <fmt-maven-plugin.version>2.29</fmt-maven-plugin.version>
@@ -72,7 +72,7 @@
 
         <!-- Test dependency versions -->
         <jqwik.version>1.10.1</jqwik.version>
-        <junit-jupiter.version>6.1.0</junit-jupiter.version>
+        <junit-jupiter.version>6.1.1</junit-jupiter.version>
         <log4j2.version>2.26.0</log4j2.version>
 
         <!-- Plugin versions -->
@@ -88,14 +88,14 @@
         <pitest-junit5.version>1.2.3</pitest-junit5.version>
 
         <!-- Pitest mutation testing -->
-        <pitest.version>1.25.3</pitest.version>
+        <pitest.version>1.25.5</pitest.version>
         <!-- Build settings -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- POM sorting -->
         <sortpom-maven-plugin.version>4.0.0</sortpom-maven-plugin.version>
-        <spring-boot.version>4.0.7</spring-boot.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
     </properties>
 
     <dependencyManagement>
