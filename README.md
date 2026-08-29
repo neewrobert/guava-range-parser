@@ -214,6 +214,27 @@ mvn clean install
 - Java 17 or higher
 - Guava 31 or higher
 
+## Compatibility
+
+`guava-range-parser-spring` is built against a recent Spring Boot, but it does
+not force that version on you. It declares `spring-boot-autoconfigure` without a
+version, so your application's own dependency management wins -- a Boot 3.5 app
+resolves Boot 3.5, and nothing here overrides it.
+
+| Spring Boot | Status |
+| --- | --- |
+| 3.5.x | Supported (floor) |
+| 4.0.x | Supported |
+| 4.1.x | Supported |
+
+Every release is tested against each of these lines, and the jar we publish is
+additionally run against the 3.5.x floor to catch any newer API baked into the
+bytecode. See the `spring-compat` and `spring-binary-compat` jobs in
+`.github/workflows/ci.yml`.
+
+Raising the floor is treated as a breaking change and will come with a minor
+version bump, not a patch.
+
 ## License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.

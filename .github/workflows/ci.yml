@@ -84,6 +84,57 @@ jobs:
           path: '**/target/pit-reports/'
           retention-days: 7
 
+  spring-compat:
+    name: Spring Boot Compat (${{ matrix.spring-boot }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported, current 4.0 patch, and current 4.1 patch.
+        # 3.5.x is the supported floor -- see "Compatibility" in README.md.
+        # Bump these deliberately; raising the floor is a breaking change
+        # for consumers and warrants a minor release of this library.
+        spring-boot: [ '3.5.16', '4.0.8', '4.1.1' ]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Test against Spring Boot ${{ matrix.spring-boot }}
+        run: mvn -B clean test -Dspring-boot.version=${{ matrix.spring-boot }} -pl guava-range-parser-spring -am
+
+  spring-binary-compat:
+    name: Spring Boot Binary Compat
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # The matrix above recompiles per version, so it cannot catch a newer
+      # API baked into the jar we actually publish. This compiles against the
+      # version we build with, then runs that exact bytecode against the
+      # oldest supported Boot -- the real NoSuchMethodError guard.
+      - name: Compile against the build version
+        run: mvn -B clean test-compile -pl guava-range-parser-spring -am
+
+      - name: Run that bytecode against the oldest supported Boot
+        run: mvn -B surefire:test -Dspring-boot.version=3.5.16 -pl guava-range-parser-spring
+
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
