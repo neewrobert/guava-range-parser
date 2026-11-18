@@ -201,6 +201,8 @@ RangeParser parser = RangeParser.builder()
 // All of these work in lenient mode:
 parser.parseRange("[0..100)", Integer.class);  // Standard
 parser.parseRange("0..100", Integer.class);    // No brackets (assumes closedOpen)
+parser.parseRange("100..INF", Integer.class);  // No brackets, unbounded upper: atLeast(100)
+parser.parseRange("-INF..100", Integer.class); // No brackets, unbounded lower: lessThan(100)
 ```
 
 ## Building

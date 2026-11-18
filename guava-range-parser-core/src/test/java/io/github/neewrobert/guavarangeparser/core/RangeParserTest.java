@@ -548,6 +548,35 @@ class RangeParserTest {
     }
 
     @Test
+    void parseBracketlessNotationWithUnboundedLower() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThat(parser.parseRange("-INF..100", Integer.class)).isEqualTo(Range.lessThan(100));
+      assertThat(parser.parseRange("-∞..100", Integer.class)).isEqualTo(Range.lessThan(100));
+      assertThat(parser.parseRange("-INF..PT0S", Duration.class))
+          .isEqualTo(Range.lessThan(Duration.ZERO));
+    }
+
+    @Test
+    void parseBracketlessNotationWithUnboundedUpper() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThat(parser.parseRange("100..INF", Integer.class)).isEqualTo(Range.atLeast(100));
+    }
+
+    @Test
+    void parseBracketlessNotationWithBothBoundsUnbounded() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThat(parser.parseRange("-INF..INF", Integer.class)).isEqualTo(Range.all());
+    }
+
+    @Test
+    void lenientModeStillRejectsExplicitClosedBracketOnNegativeInfinity() {
+      RangeParser parser = RangeParser.builder().lenient(true).build();
+      assertThatThrownBy(() -> parser.parseRange("[-INF..100)", Integer.class))
+          .isInstanceOf(RangeParseException.class)
+          .hasMessageContaining("negative infinity bound must be open");
+    }
+
+    @Test
     void lenientModeIgnoresInputWithBrackets() {
       // Test the branch where lenient=true but input already has brackets
       RangeParser parser = RangeParser.builder().lenient(true).build();
