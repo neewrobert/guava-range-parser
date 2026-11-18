@@ -96,6 +96,11 @@ class RangeConverterAutoConfigurationTest {
               Object result =
                   factory.convert("0..100", TypeDescriptor.valueOf(String.class), targetType);
               assertThat(result).isEqualTo(Range.closedOpen(0, 100));
+
+              // An unbounded lower bound is implicitly open
+              Object unboundedLower =
+                  factory.convert("-INF..100", TypeDescriptor.valueOf(String.class), targetType);
+              assertThat(unboundedLower).isEqualTo(Range.lessThan(100));
             });
   }
 

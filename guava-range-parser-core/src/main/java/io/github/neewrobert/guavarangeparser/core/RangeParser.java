@@ -218,11 +218,15 @@ public final class RangeParser {
           trimOffset + bracketOffset + separatorIndex + SEPARATOR.length());
     }
 
-    BoundType lowerBoundType = openingBracket == '[' ? BoundType.CLOSED : BoundType.OPEN;
-    BoundType upperBoundType = closingBracket == ']' ? BoundType.CLOSED : BoundType.OPEN;
-
     boolean lowerUnbounded = NEGATIVE_INFINITY.contains(lowerPart);
     boolean upperUnbounded = POSITIVE_INFINITY.contains(upperPart);
+
+    // Lenient mode wraps bracket-less input as closed-open. An infinite bound can only be open,
+    // so the implied '[' must not apply to it; explicit brackets are still validated as written.
+    boolean impliedOpenLower = lenientWrapped && lowerUnbounded;
+    BoundType lowerBoundType =
+        openingBracket == '[' && !impliedOpenLower ? BoundType.CLOSED : BoundType.OPEN;
+    BoundType upperBoundType = closingBracket == ']' ? BoundType.CLOSED : BoundType.OPEN;
 
     // Compute positions of trimmed values within the original string
     int lowerLeadingSpaces = lowerRaw.length() - lowerRaw.stripLeading().length();
@@ -405,6 +409,7 @@ public final class RangeParser {
      *
      * <ul>
      *   <li>Bracket-less notation like "0..100" is accepted (treated as [0..100))
+     *   <li>A bracket-less unbounded lower bound is open, so "-INF..100" is treated as (-INF..100)
      *   <li>Various infinity representations are accepted
      * </ul>
      *
