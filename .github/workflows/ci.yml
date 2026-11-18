@@ -97,7 +97,7 @@ jobs:
         # 3.5.x is the supported floor -- see "Compatibility" in README.md.
         # Bump these deliberately; raising the floor is a breaking change
         # for consumers and warrants a minor release of this library.
-        spring-boot: [ '3.5.16', '4.0.8', '4.1.1' ]
+        spring-boot: [ '3.5.16', '4.0.8', '4.1.2' ]
 
     steps:
       - name: Checkout code
